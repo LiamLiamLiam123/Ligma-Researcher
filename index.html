@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ligma Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07070b;--bg2:#0d0d14;--bg3:#12121c;--bg4:#181824;--bg5:#1e1e2e;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.15);
+  --t1:#f4f4ff;--t2:#9898bb;--t3:#55556a;--t4:#2e2e42;
+  --lime:#c8ff00;--lime2:#d4ff33;--limebg:rgba(200,255,0,0.07);--limebg2:rgba(200,255,0,0.13);--limebdr:rgba(200,255,0,0.28);
+  --amber:#ffb800;--amberbg:rgba(255,184,0,0.08);
+  --teal:#00e5cc;--tealbg:rgba(0,229,204,0.08);
+  --blue:#4d8dff;--bluebg:rgba(77,141,255,0.08);
+  --pink:#ff44aa;--pinkbg:rgba(255,68,170,0.08);
+  --purple:#aa44ff;--purplebg:rgba(170,68,255,0.08);
+  --red:#ff4444;--redbg:rgba(255,68,68,0.08);
+  --green:#34d399;--greenbg:rgba(52,211,153,0.08);
+  --sw:272px;
+  --font:'DM Sans',sans-serif;--display:'Bebas Neue',sans-serif;--mono:'DM Mono',monospace;
+  --r:8px;--rl:12px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t1);overflow:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+.app{display:flex;height:100vh;width:100vw}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sw);min-width:var(--sw);background:var(--bg2);border-right:1px solid var(--b1);display:flex;flex-direction:column;height:100vh;overflow:hidden;flex-shrink:0}
+.logo-area{padding:18px 16px 14px;border-bottom:1px solid var(--b1);flex-shrink:0}
+.logo-lockup{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.logo-mark{width:36px;height:36px;background:var(--lime);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark-letter{font-family:var(--display);font-size:20px;color:#07070b;line-height:1}
+.logo-main{font-family:var(--display);font-size:20px;letter-spacing:1px;color:var(--t1);line-height:1}
+.logo-main em{color:var(--lime);font-style:normal}
+.logo-sub{font-size:9px;font-family:var(--mono);color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px}
+.new-btn{width:100%;padding:9px 14px;background:var(--lime);border:none;border-radius:var(--r);color:#07070b;font-family:var(--font);font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all 0.18s}
+.new-btn:hover{background:var(--lime2);transform:translateY(-1px)}
+
+/* TABS */
+.nav-tabs{display:flex;border-bottom:1px solid var(--b1);flex-shrink:0;padding:0 6px}
+.nav-tab{flex:1;padding:10px 4px;text-align:center;font-size:10px;font-family:var(--mono);color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.3px;user-select:none}
+.nav-tab:hover{color:var(--t2)}
+.nav-tab.active{color:var(--lime);border-bottom-color:var(--lime)}
+.panel{flex:1;overflow:hidden;display:none;flex-direction:column;min-height:0}
+.panel.active{display:flex}
+.panel-scroll{flex:1;overflow-y:auto;padding:8px 6px}
+.slabel{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);padding:6px 10px 5px}
+
+/* HISTORY */
+.hist{padding:6px 10px;border-radius:7px;font-size:12px;color:var(--t2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all 0.15s;display:flex;align-items:center;gap:7px;margin-bottom:1px}
+.hist-dot{width:4px;height:4px;border-radius:50%;background:var(--t4);flex-shrink:0;transition:background 0.15s}
+.hist:hover{background:var(--bg3);color:var(--t1)}
+.hist:hover .hist-dot{background:var(--lime)}
+
+/* SOURCES */
+.src-group-label{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.3px;color:var(--t3);padding:8px 10px 4px;display:flex;align-items:center;gap:6px}
+.src-group-label::after{content:'';flex:1;height:1px;background:var(--b1)}
+.src-item{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:6px;cursor:pointer;transition:background 0.12s;user-select:none;margin-bottom:1px}
+.src-item:hover{background:var(--bg3)}
+.src-cb{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--b3);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.src-item.on .src-cb{background:var(--lime);border-color:var(--lime)}
+.src-item.on .src-cb::after{content:'';display:block;width:7px;height:5px;border-left:1.5px solid #07070b;border-bottom:1.5px solid #07070b;transform:rotate(-45deg) translateY(-1px)}
+.src-name{font-size:11.5px;color:var(--t2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src-item.on .src-name{color:var(--t1)}
+.src-status{font-size:9px;font-family:var(--mono);flex-shrink:0;color:var(--t3)}
+.src-item.on .src-status{color:var(--lime)}
+.stag{font-size:8px;font-family:var(--mono);font-weight:500;padding:2px 5px;border-radius:3px;letter-spacing:0.3px;flex-shrink:0}
+.tag-gov{background:var(--tealbg);color:var(--teal)}
+.tag-edu{background:var(--bluebg);color:var(--blue)}
+.tag-sci{background:var(--purplebg);color:var(--purple)}
+.tag-med{background:var(--pinkbg);color:var(--pink)}
+.tag-news{background:var(--amberbg);color:var(--amber)}
+.tag-data{background:var(--limebg2);color:var(--lime)}
+.bulk-btns{display:flex;gap:5px;padding:8px 8px 4px;flex-wrap:wrap}
+.bulk-btn{padding:5px 11px;border-radius:6px;border:1px solid var(--b2);background:transparent;color:var(--t2);font-family:var(--font);font-size:10.5px;cursor:pointer;transition:all 0.15s}
+.bulk-btn:hover{background:var(--bg3);color:var(--lime);border-color:var(--limebdr)}
+
+/* SETTINGS */
+.setting-row{padding:11px 12px;border-radius:var(--r);border:1px solid var(--b1);background:var(--bg3);margin-bottom:7px}
+.setting-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.setting-label{font-size:12.5px;font-weight:500;color:var(--t1)}
+.setting-desc{font-size:10.5px;color:var(--t3);line-height:1.4;margin-top:2px}
+.toggle{width:36px;height:20px;border-radius:10px;background:var(--bg5);border:1px solid var(--b2);cursor:pointer;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle.on{background:var(--lime);border-color:var(--lime)}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform 0.2s}
+.toggle.on::after{transform:translateX(16px);background:#07070b}
+.setting-select{width:100%;margin-top:7px;padding:7px 10px;background:var(--bg4);border:1px solid var(--b2);border-radius:var(--r);color:var(--t1);font-family:var(--font);font-size:12px;outline:none;cursor:pointer}
+.setting-select:focus{border-color:var(--lime)}
+.setting-slider{width:100%;margin-top:8px;accent-color:var(--lime)}
+.slider-labels{display:flex;justify-content:space-between;font-size:9.5px;color:var(--t3);font-family:var(--mono);margin-top:3px}
+.sgroup-title{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);margin-bottom:6px;padding:0 2px;display:flex;align-items:center;gap:6px}
+.sgroup-title::after{content:'';flex:1;height:1px;background:var(--b1)}
+.sgroup{margin-bottom:14px}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;min-width:0}
+.topbar{height:52px;border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 22px;gap:10px;flex-shrink:0;background:rgba(7,7,11,0.85);backdrop-filter:blur(16px)}
+.topbar-title{font-size:13px;color:var(--t2);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tbadge{padding:4px 10px;border-radius:20px;font-size:10px;font-family:var(--mono);border:1px solid;white-space:nowrap;letter-spacing:0.3px}
+.tbadge-std{border-color:var(--b2);color:var(--t3)}
+.tbadge-lime{border-color:var(--limebdr);color:var(--lime);background:var(--limebg)}
+.tbadge-amber{border-color:rgba(255,184,0,0.3);color:var(--amber);background:var(--amberbg)}
+.tbadge-pink{border-color:rgba(255,68,170,0.3);color:var(--pink);background:var(--pinkbg)}
+.src-pill{font-size:10px;font-family:var(--mono);color:var(--t3);padding:4px 10px;border:1px solid var(--b1);border-radius:20px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.src-pill:hover{color:var(--lime);border-color:var(--limebdr)}
+
+/* CHAT */
+.chat-scroll{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.chat-inner{flex:1;max-width:880px;width:100%;margin:0 auto;padding:28px 28px 16px;display:flex;flex-direction:column}
+
+/* WELCOME */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center}
+.welcome-eyebrow{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:2px;color:var(--lime);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.welcome-eyebrow::before,.welcome-eyebrow::after{content:'';width:24px;height:1px;background:var(--lime);opacity:0.4}
+.welcome-headline{font-family:var(--display);font-size:72px;letter-spacing:2px;line-height:0.95;margin-bottom:14px}
+.welcome-headline em{color:var(--lime);font-style:normal}
+.welcome-sub{font-size:14px;color:var(--t2);max-width:400px;line-height:1.65;margin-bottom:10px;font-weight:300}
+.stat-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;justify-content:center}
+.stat-pill{padding:5px 12px;border:1px solid var(--b2);border-radius:20px;font-size:10.5px;font-family:var(--mono);color:var(--t2);display:flex;align-items:center;gap:5px}
+.stat-dot{width:5px;height:5px;border-radius:50%;background:var(--lime);flex-shrink:0}
+.sugg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:560px;width:100%}
+.sugg{padding:14px 16px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--rl);text-align:left;cursor:pointer;transition:all 0.2s}
+.sugg:hover{border-color:var(--limebdr);background:var(--bg3);transform:translateY(-2px)}
+.sugg-icon{font-size:18px;margin-bottom:6px}
+.sugg-title{font-size:12.5px;font-weight:600;color:var(--t1);margin-bottom:3px}
+.sugg-desc{font-size:10.5px;color:var(--t3);line-height:1.4}
+
+/* MESSAGES */
+.mgroup{margin-bottom:26px;animation:fadeUp 0.25s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.user-row{display:flex;justify-content:flex-end;margin-bottom:4px}
+.user-bub{background:var(--bg3);border:1px solid var(--b2);border-radius:14px 14px 3px 14px;padding:11px 16px;font-size:14px;line-height:1.6;max-width:70%;word-break:break-word}
+.ai-row{display:flex;flex-direction:column}
+.ai-hd{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.ai-av{width:30px;height:30px;border-radius:50%;background:var(--lime);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:14px;color:#07070b;flex-shrink:0}
+.ai-name{font-size:13px;font-weight:600;color:var(--t1)}
+.ai-mtag{font-size:9.5px;font-family:var(--mono);padding:2px 7px;border-radius:4px;border:1px solid var(--b2);color:var(--t3)}
+.ai-body{margin-left:40px}
+
+/* SOURCE STATUS DURING FETCH */
+.fetch-status{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;padding:12px 14px;background:var(--bg3);border:1px solid var(--b1);border-radius:var(--r)}
+.fetch-row{display:flex;align-items:center;gap:9px;font-size:11.5px;font-family:var(--mono);color:var(--t3);transition:color 0.2s}
+.fetch-row.done{color:var(--green)}
+.fetch-row.active{color:var(--amber)}
+.fetch-row.error{color:var(--red);opacity:0.6}
+.fetch-row.skip{color:var(--t4)}
+.fetch-ic{width:16px;text-align:center;flex-shrink:0}
+.spinner{width:11px;height:11px;border:1.5px solid rgba(255,184,0,0.2);border-top-color:var(--amber);border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CONTENT */
+.ai-content{font-size:14.5px;line-height:1.8;color:#d8d8f0;word-break:break-word}
+.ai-content h2{font-size:17px;font-weight:600;color:var(--t1);margin:18px 0 7px;padding-bottom:6px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:8px}
+.ai-content h2::before{content:'';width:3px;height:16px;background:var(--lime);border-radius:2px;flex-shrink:0}
+.ai-content h3{font-size:14.5px;font-weight:600;color:var(--t1);margin:14px 0 5px}
+.ai-content p{margin-bottom:11px}
+.ai-content ul,.ai-content ol{margin:8px 0 12px 20px;display:flex;flex-direction:column;gap:4px}
+.ai-content li::marker{color:var(--lime)}
+.ai-content strong{font-weight:600;color:var(--t1)}
+.ai-content em{color:var(--t2);font-style:italic}
+.ai-content a{color:var(--lime);text-decoration:none}
+.ai-content a:hover{text-decoration:underline}
+.ai-content blockquote{border-left:3px solid var(--lime);padding:8px 14px;margin:12px 0;background:var(--limebg);border-radius:0 8px 8px 0;color:var(--t2);font-style:italic}
+.ai-content hr{border:none;border-top:1px solid var(--b1);margin:16px 0}
+.ai-content code{font-family:var(--mono);font-size:12px;background:var(--bg3);border:1px solid var(--b2);padding:2px 6px;border-radius:4px;color:var(--lime)}
+
+/* RESULT CARD */
+.result-card{margin:8px 0;padding:12px 14px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r);transition:border-color 0.15s}
+.result-card:hover{border-color:var(--b2)}
+.rc-source{font-size:9.5px;font-family:var(--mono);color:var(--t3);margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.rc-title{font-size:13.5px;font-weight:600;color:var(--t1);margin-bottom:5px;line-height:1.35}
+.rc-title a{color:var(--t1);text-decoration:none}
+.rc-title a:hover{color:var(--lime)}
+.rc-snippet{font-size:12.5px;color:var(--t2);line-height:1.6}
+.rc-authors{font-size:11px;color:var(--t3);margin-top:5px;font-family:var(--mono)}
+.rc-date{font-size:10px;font-family:var(--mono);color:var(--t3);margin-top:3px}
+
+/* SECTION WRAP */
+.results-section{margin-bottom:20px}
+.results-section-title{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.4px;color:var(--t3);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.results-section-title::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+/* BIB */
+.bib-wrap{margin-top:18px;border:1px solid var(--b1);border-radius:var(--rl);overflow:hidden}
+.bib-hd{padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;transition:background 0.15s}
+.bib-hd:hover{background:var(--bg4)}
+.bib-htxt{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.3px;color:var(--t3);flex:1}
+.bib-arr{font-size:10px;color:var(--t3);transition:transform 0.2s}
+.bib-wrap.open .bib-arr{transform:rotate(90deg)}
+.bib-list{display:none;flex-direction:column}
+.bib-wrap.open .bib-list{display:flex}
+.bib-entry{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:1px solid var(--b1);transition:background 0.12s}
+.bib-entry:last-child{border-bottom:none}
+.bib-entry:hover{background:var(--bg3)}
+.bib-num{font-size:10.5px;font-family:var(--mono);color:var(--lime);min-width:22px;padding-top:1px}
+.bib-info{flex:1;min-width:0}
+.bib-sn{font-size:12.5px;font-weight:500;color:var(--t1);margin-bottom:2px}
+.bib-sd{font-size:11px;color:var(--t3);line-height:1.4}
+.bib-url{font-size:10px;font-family:var(--mono);color:var(--lime);margin-top:3px;opacity:0.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.bib-url:hover{opacity:1}
+.bib-st{flex-shrink:0}
+
+/* ERROR */
+.err-block{padding:14px 16px;background:var(--redbg);border:1px solid rgba(255,68,68,0.2);border-radius:var(--r);font-size:12.5px;color:#ff8888;line-height:1.6}
+.no-results{padding:20px;text-align:center;color:var(--t3);font-size:13px;font-family:var(--mono)}
+
+/* INPUT */
+.input-zone{padding:12px 22px 18px;flex-shrink:0;background:var(--bg)}
+.input-frame{max-width:880px;margin:0 auto}
+.input-wrap{position:relative;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--rl);transition:border-color 0.2s,box-shadow 0.2s}
+.input-wrap:focus-within{border-color:var(--limebdr);box-shadow:0 0 0 3px var(--limebg)}
+.input-ta{width:100%;background:transparent;border:none;outline:none;padding:13px 52px 13px 16px;font-family:var(--font);font-size:14px;color:var(--t1);resize:none;max-height:180px;line-height:1.55;display:block}
+.input-ta::placeholder{color:var(--t3)}
+.send-btn{position:absolute;right:9px;bottom:9px;width:34px;height:34px;border-radius:var(--r);background:var(--lime);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.18s}
+.send-btn:hover{background:var(--lime2);transform:scale(1.06)}
+.send-btn:active{transform:scale(0.96)}
+.send-btn:disabled{background:var(--bg5);cursor:not-allowed;transform:none}
+.send-btn svg{width:14px;height:14px;fill:none;stroke:#07070b;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.send-btn:disabled svg{stroke:var(--t3)}
+.input-foot{display:flex;align-items:center;justify-content:center;margin-top:8px;font-size:10px;color:var(--t3);gap:5px;font-family:var(--mono)}
+
+/* SUMMARY BOX */
+.summary-box{padding:16px;background:var(--limebg);border:1px solid var(--limebdr);border-radius:var(--r);margin-bottom:16px}
+.summary-box-label{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.4px;color:var(--lime);margin-bottom:8px}
+.summary-box-text{font-size:14px;line-height:1.75;color:var(--t1)}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.stat-chip{padding:4px 10px;background:var(--bg3);border:1px solid var(--b1);border-radius:20px;font-size:10.5px;font-family:var(--mono);color:var(--t2);display:flex;align-items:center;gap:5px}
+.stat-chip span{color:var(--lime);font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="logo-area">
+    <div class="logo-lockup">
+      <div class="logo-mark"><span class="logo-mark-letter">L</span></div>
+      <div>
+        <div class="logo-main">LIGMA<em>RESEARCH</em></div>
+        <div class="logo-sub">AI without the AI</div>
+      </div>
+    </div>
+    <button class="new-btn" onclick="newChat()">
+      <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Research Session
+    </button>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-tab="history" onclick="switchTab(this)">History</div>
+    <div class="nav-tab" data-tab="sources" onclick="switchTab(this)">Sources</div>
+    <div class="nav-tab" data-tab="settings" onclick="switchTab(this)">Settings</div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="panel active" id="panel-history">
+    <div class="panel-scroll">
+      <div class="slabel">Recent</div>
+      <div id="histList">
+        <div class="hist" onclick="fillQ('mRNA vaccines')"><div class="hist-dot"></div>mRNA vaccines</div>
+        <div class="hist" onclick="fillQ('quantum computing')"><div class="hist-dot"></div>Quantum computing</div>
+        <div class="hist" onclick="fillQ('climate change ocean')"><div class="hist-dot"></div>Climate change & oceans</div>
+        <div class="hist" onclick="fillQ('CRISPR gene editing')"><div class="hist-dot"></div>CRISPR gene editing</div>
+        <div class="hist" onclick="fillQ('dark matter')"><div class="hist-dot"></div>Dark matter</div>
+        <div class="hist" onclick="fillQ('black holes')"><div class="hist-dot"></div>Black holes</div>
+        <div class="hist" onclick="fillQ('artificial intelligence')"><div class="hist-dot"></div>Artificial intelligence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="panel" id="panel-sources">
+    <div class="bulk-btns">
+      <button class="bulk-btn" onclick="bulkSrc(true)">All</button>
+      <button class="bulk-btn" onclick="bulkSrc(false)">None</button>
+    </div>
+    <div class="panel-scroll" id="sourceList"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="panel-settings">
+    <div class="panel-scroll">
+      <div class="sgroup">
+        <div class="sgroup-title">Results</div>
+        <div class="setting-row">
+          <div class="setting-head"><div class="setting-label">Auto-open Bibliography</div><div class="toggle on" id="tog-autobib" onclick="toggleSetting('autobib')"></div></div>
+          <div class="setting-desc">Expand bibliography after each response.</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-head"><div class="setting-label">Show Wikipedia Summary</div><div class="toggle on" id="tog-wikisummary" onclick="toggleSetting('wikisummary')"></div></div>
+          <div class="setting-desc">Display Wikipedia intro paragraph at top.</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-head"><div class="setting-label">Show Academic Papers</div><div class="toggle on" id="tog-papers" onclick="toggleSetting('papers')"></div></div>
+          <div class="setting-desc">Show arXiv and OpenAlex research papers.</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-head"><div class="setting-label">Show Medical Results</div><div class="toggle on" id="tog-medical" onclick="toggleSetting('medical')"></div></div>
+          <div class="setting-desc">Show PubMed medical literature.</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Max Results Per Source</div>
+          <select class="setting-select" id="sel-maxresults">
+            <option value="3">3 per source</option>
+            <option value="5" selected>5 per source</option>
+            <option value="8">8 per source</option>
+            <option value="10">10 per source</option>
+          </select>
+        </div>
+      </div>
+      <div class="sgroup">
+        <div class="sgroup-title">Interface</div>
+        <div class="setting-row">
+          <div class="setting-head"><div class="setting-label">Auto-scroll</div><div class="toggle on" id="tog-autoscroll" onclick="toggleSetting('autoscroll')"></div></div>
+          <div class="setting-desc">Scroll to results automatically.</div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Font Size</div>
+          <input type="range" class="setting-slider" min="12" max="19" value="14.5" oninput="setFontSize(this.value)">
+          <div class="slider-labels"><span>Small</span><span>Default</span><span>Large</span></div>
+        </div>
+      </div>
+      <div class="sgroup">
+        <div class="sgroup-title">Data</div>
+        <button class="bulk-btn" style="width:100%;padding:9px;margin-top:2px" onclick="newChat()">🗑 Clear History</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">New Research Session</div>
+    <div class="src-pill" id="srcPill" onclick="switchTabById('sources')">6 sources</div>
+    <div class="tbadge tbadge-std" id="statusBadge">ready</div>
+  </div>
+
+  <div class="chat-scroll" id="chatScroll">
+    <div class="chat-inner">
+      <div class="welcome" id="welcome">
+        <div class="welcome-eyebrow">Research Engine</div>
+        <div class="welcome-headline">LIGMA<br><em>RESEARCH</em></div>
+        <div class="welcome-sub">Real data. No AI. No API keys. Pulls live results from Wikipedia, PubMed, arXiv, OpenAlex, Wikidata & DuckDuckGo.</div>
+        <div class="stat-bar">
+          <div class="stat-pill"><div class="stat-dot"></div>Wikipedia</div>
+          <div class="stat-pill"><div class="stat-dot"></div>PubMed</div>
+          <div class="stat-pill"><div class="stat-dot"></div>arXiv</div>
+          <div class="stat-pill"><div class="stat-dot"></div>OpenAlex</div>
+          <div class="stat-pill"><div class="stat-dot"></div>DuckDuckGo</div>
+          <div class="stat-pill"><div class="stat-dot"></div>Wikidata</div>
+        </div>
+        <div class="sugg-grid">
+          <div class="sugg" onclick="fillQ('mRNA vaccines')"><div class="sugg-icon">🧬</div><div class="sugg-title">mRNA Vaccines</div><div class="sugg-desc">Wikipedia overview + PubMed clinical papers + arXiv preprints</div></div>
+          <div class="sugg" onclick="fillQ('quantum computing')"><div class="sugg-icon">⚛️</div><div class="sugg-title">Quantum Computing</div><div class="sugg-desc">Wikipedia + arXiv research + OpenAlex academic literature</div></div>
+          <div class="sugg" onclick="fillQ('climate change')"><div class="sugg-icon">🌊</div><div class="sugg-title">Climate Change</div><div class="sugg-desc">Real data from Wikipedia, PubMed, arXiv & OpenAlex</div></div>
+          <div class="sugg" onclick="fillQ('CRISPR gene editing')"><div class="sugg-icon">🔬</div><div class="sugg-title">CRISPR</div><div class="sugg-desc">Gene editing research from top academic sources</div></div>
+        </div>
+      </div>
+      <div id="messages"></div>
+    </div>
+  </div>
+
+  <div class="input-zone">
+    <div class="input-frame">
+      <div class="input-wrap">
+        <textarea class="input-ta" id="queryInput" rows="1"
+          placeholder="Search anything — topic, question, concept…"
+          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="submit()" title="Research">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="input-foot">Ligma Research · Real APIs · No AI · No keys · No servers · Just raw data</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// SOURCES CONFIG
+// ═══════════════════════════════════════════
+const SOURCES_CFG = [
+  { id:'wikipedia', name:'Wikipedia',     tag:'edu',  on:true,  desc:'Free encyclopedia summary & intro' },
+  { id:'duckduckgo',name:'DuckDuckGo',    tag:'edu',  on:true,  desc:'Instant answer & quick definition' },
+  { id:'pubmed',    name:'PubMed',        tag:'med',  on:true,  desc:'Medical & biomedical research papers' },
+  { id:'arxiv',     name:'arXiv',         tag:'sci',  on:true,  desc:'Physics, CS, math preprints' },
+  { id:'openalex',  name:'OpenAlex',      tag:'sci',  on:true,  desc:'500M+ academic works, open access' },
+  { id:'wikidata',  name:'Wikidata',      tag:'data', on:true,  desc:'Structured knowledge facts' },
+];
+
+const SETTINGS = { autobib:true, wikisummary:true, papers:true, medical:true, autoscroll:true };
+let busy = false;
+
+// ═══ SIDEBAR LOGIC ═══
+function renderSources() {
+  const groups = { edu:'Reference & Search', med:'Medical', sci:'Academic & Science', data:'Structured Data' };
+  const byGroup = {};
+  SOURCES_CFG.forEach(s => { if (!byGroup[s.tag]) byGroup[s.tag] = []; byGroup[s.tag].push(s); });
+  let h = '';
+  Object.keys(groups).forEach(g => {
+    if (!byGroup[g]) return;
+    h += `<div class="src-group-label">${groups[g]}</div>`;
+    byGroup[g].forEach(s => {
+      h += `<div class="src-item ${s.on?'on':''}" id="src_${s.id}" onclick="toggleSrc('${s.id}')">
+        <div class="src-cb"></div>
+        <div class="src-name">${s.name}</div>
+        <div class="stag tag-${s.tag}">${s.tag.toUpperCase()}</div>
+      </div>`;
+    });
+  });
+  document.getElementById('sourceList').innerHTML = h;
+  updateCount();
+}
+
+function toggleSrc(id) {
+  const s = SOURCES_CFG.find(x => x.id === id);
+  if (s) { s.on = !s.on; document.getElementById('src_'+id)?.classList.toggle('on', s.on); updateCount(); }
+}
+function bulkSrc(v) {
+  SOURCES_CFG.forEach(s => { s.on = v; document.getElementById('src_'+s.id)?.classList.toggle('on', v); });
+  updateCount();
+}
+function updateCount() {
+  const n = SOURCES_CFG.filter(s => s.on).length;
+  document.getElementById('srcPill').textContent = n + ' sources';
+}
+function isOn(id) { return SOURCES_CFG.find(s => s.id === id)?.on; }
+
+function switchTab(el) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + el.dataset.tab).classList.add('active');
+}
+function switchTabById(id) {
+  const t = document.querySelector(`.nav-tab[data-tab="${id}"]`);
+  if (t) switchTab(t);
+}
+function toggleSetting(k) {
+  SETTINGS[k] = !SETTINGS[k];
+  document.getElementById('tog-'+k)?.classList.toggle('on', SETTINGS[k]);
+}
+function setFontSize(v) { document.querySelectorAll('.ai-content').forEach(e => e.style.fontSize = v+'px'); }
+
+// ═══ UTILS ═══
+function fillQ(t) { const ta = document.getElementById('queryInput'); ta.value = t; autoResize(ta); ta.focus(); }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,180)+'px'; }
+function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); submit(); } }
+function newChat() {
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('welcome').style.display = 'flex';
+  document.getElementById('topbarTitle').textContent = 'New Research Session';
+  document.getElementById('queryInput').value = '';
+  document.getElementById('queryInput').style.height = 'auto';
+  setBadge('ready','std');
+}
+function scrollBot() {
+  if (!SETTINGS.autoscroll) return;
+  setTimeout(() => { document.getElementById('chatScroll').scrollTop = 99999; }, 100);
+}
+function setBadge(text, type='std') {
+  const b = document.getElementById('statusBadge');
+  b.className = 'tbadge tbadge-' + ({std:'std',lime:'lime',amber:'amber',pink:'pink'}[type]||'std');
+  b.textContent = text;
+}
+function esc(t) { return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function truncate(t, n) { return t && t.length > n ? t.slice(0, n) + '…' : (t||''); }
+
+function setBusy(v) {
+  busy = v;
+  document.getElementById('sendBtn').disabled = v;
+  if (!v) setBadge('ready','std');
+}
+
+// ═══ SUBMIT ═══
+function submit() {
+  if (busy) return;
+  const ta = document.getElementById('queryInput');
+  const q = ta.value.trim();
+  if (!q) return;
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('topbarTitle').textContent = q.length > 55 ? q.slice(0,55)+'…' : q;
+  ta.value = ''; ta.style.height = 'auto';
+  addUserMsg(q);
+  doResearch(q);
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('messages');
+  const g = document.createElement('div');
+  g.className = 'mgroup';
+  g.innerHTML = `<div class="user-row"><div class="user-bub">${esc(text)}</div></div>`;
+  msgs.appendChild(g); scrollBot();
+}
+
+// ═══ CREATE AI MESSAGE CONTAINER ═══
+function createAiMsg() {
+  const msgs = document.getElementById('messages');
+  const g = document.createElement('div');
+  g.className = 'mgroup';
+  const id = 'aim_' + Date.now();
+  g.innerHTML = `<div class="ai-row">
+    <div class="ai-hd">
+      <div class="ai-av">L</div>
+      <div class="ai-name">Ligma Research</div>
+      <div class="ai-mtag" id="${id}_tag">fetching…</div>
+    </div>
+    <div class="ai-body">
+      <div class="fetch-status" id="${id}_status"></div>
+      <div id="${id}_content"></div>
+    </div>
+  </div>`;
+  msgs.appendChild(g);
+  scrollBot();
+  return id;
+}
+
+function setFetchRow(containerId, srcId, state, text) {
+  const statusEl = document.getElementById(containerId + '_status');
+  if (!statusEl) return;
+  let row = document.getElementById(containerId + '_' + srcId);
+  if (!row) {
+    row = document.createElement('div');
+    row.id = containerId + '_' + srcId;
+    row.className = 'fetch-row';
+    statusEl.appendChild(row);
+  }
+  row.className = 'fetch-row ' + state;
+  const icons = { active: '<div class="spinner"></div>', done: '✓', error: '✕', skip: '–' };
+  row.innerHTML = `<span class="fetch-ic">${icons[state]||'○'}</span><span>${text}</span>`;
+  scrollBot();
+}
+
+function setMsgTag(id, text) {
+  const el = document.getElementById(id + '_tag');
+  if (el) el.textContent = text;
+}
+
+// ═══════════════════════════════════════════
+// API FETCHERS
+// ═══════════════════════════════════════════
+
+async function fetchWikipedia(query, maxResults) {
+  // 1. Search
+  const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&srlimit=${maxResults}&format=json&origin=*`;
+  const searchRes = await fetch(searchUrl);
+  const searchData = await searchRes.json();
+  const hits = searchData.query?.search || [];
+
+  // 2. Get summary for top result
+  let summary = null;
+  if (hits.length > 0) {
+    const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hits[0].title)}`;
+    try {
+      const summaryRes = await fetch(summaryUrl);
+      if (summaryRes.ok) { summary = await summaryRes.json(); }
+    } catch(e) {}
+  }
+
+  return {
+    summary,
+    results: hits.map(h => ({
+      title: h.title,
+      snippet: h.snippet.replace(/<[^>]+>/g, ''),
+      url: `https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g,'_'))}`,
+      source: 'Wikipedia',
+    }))
+  };
+}
+
+async function fetchDuckDuckGo(query) {
+  const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_redirect=1&skip_disambig=1`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const results = [];
+  if (data.AbstractText) {
+    results.push({
+      title: data.Heading || query,
+      snippet: data.AbstractText,
+      url: data.AbstractURL || data.AbstractSource,
+      source: 'DuckDuckGo / ' + (data.AbstractSource||''),
+    });
+  }
+  (data.RelatedTopics||[]).slice(0,3).forEach(t => {
+    if (t.Text && t.FirstURL) {
+      results.push({ title: t.Text.split(' - ')[0]||t.Text, snippet: t.Text, url: t.FirstURL, source: 'DuckDuckGo' });
+    }
+  });
+  return results;
+}
+
+async function fetchPubMed(query, maxResults) {
+  // 1. Search for IDs
+  const searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&retmax=${maxResults}&retmode=json&sort=relevance`;
+  const searchRes = await fetch(searchUrl);
+  const searchData = await searchRes.json();
+  const ids = searchData.esearchresult?.idlist || [];
+  if (!ids.length) return [];
+
+  // 2. Fetch summaries
+  const summaryUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids.join(',')}&retmode=json`;
+  const summaryRes = await fetch(summaryUrl);
+  const summaryData = await summaryRes.json();
+  const result = summaryData.result || {};
+
+  return ids.map(id => {
+    const art = result[id];
+    if (!art) return null;
+    const authors = (art.authors||[]).slice(0,3).map(a=>a.name).join(', ');
+    return {
+      title: art.title || 'Untitled',
+      snippet: `${art.fulljournalname||art.source||''}${art.pubdate?' · '+art.pubdate:''}`,
+      url: `https://pubmed.ncbi.nlm.nih.gov/${id}/`,
+      authors,
+      date: art.pubdate,
+      source: 'PubMed',
+    };
+  }).filter(Boolean);
+}
+
+async function fetchArxiv(query, maxResults) {
+  const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${maxResults}&sortBy=relevance`;
+  const res = await fetch(url);
+  const text = await res.text();
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(text, 'text/xml');
+  const entries = Array.from(xml.querySelectorAll('entry'));
+  return entries.map(e => {
+    const id = e.querySelector('id')?.textContent || '';
+    const absId = id.replace('http://arxiv.org/abs/','').replace('https://arxiv.org/abs/','').trim();
+    const authors = Array.from(e.querySelectorAll('author name')).slice(0,3).map(a=>a.textContent).join(', ');
+    const summary = (e.querySelector('summary')?.textContent||'').trim().replace(/\s+/g,' ');
+    return {
+      title: e.querySelector('title')?.textContent?.trim() || 'Untitled',
+      snippet: truncate(summary, 280),
+      url: `https://arxiv.org/abs/${absId}`,
+      authors,
+      date: e.querySelector('published')?.textContent?.slice(0,10) || '',
+      source: 'arXiv',
+    };
+  });
+}
+
+async function fetchOpenAlex(query, maxResults) {
+  const url = `https://api.openalex.org/works?search=${encodeURIComponent(query)}&per-page=${maxResults}&sort=relevance_score:desc&mailto=ligmaresearch@example.com`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return (data.results||[]).map(w => {
+    const authors = (w.authorships||[]).slice(0,3).map(a=>a.author?.display_name||'').filter(Boolean).join(', ');
+    const venue = w.primary_location?.source?.display_name || '';
+    return {
+      title: w.title || 'Untitled',
+      snippet: truncate(w.abstract_inverted_index ? reconstructAbstract(w.abstract_inverted_index) : (venue ? 'Published in: ' + venue : ''), 280),
+      url: w.primary_location?.landing_page_url || w.id || '',
+      authors,
+      date: w.publication_year?.toString() || '',
+      cited: w.cited_by_count || 0,
+      source: 'OpenAlex',
+    };
+  });
+}
+
+function reconstructAbstract(invertedIndex) {
+  if (!invertedIndex) return '';
+  const words = [];
+  for (const [word, positions] of Object.entries(invertedIndex)) {
+    positions.forEach(pos => { words[pos] = word; });
+  }
+  return words.filter(Boolean).join(' ');
+}
+
+async function fetchWikidata(query) {
+  const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=en&limit=3&format=json&origin=*`;
+  const res = await fetch(url);
+  const data = await res.json();
+  return (data.search||[]).map(e => ({
+    title: e.label || '',
+    snippet: e.description || '',
+    url: `https://www.wikidata.org/wiki/${e.id}`,
+    source: 'Wikidata',
+  })).filter(e => e.snippet);
+}
+
+// ═══════════════════════════════════════════
+// MAIN RESEARCH ORCHESTRATOR
+// ═══════════════════════════════════════════
+async function doResearch(query) {
+  setBusy(true);
+  setBadge('searching…', 'amber');
+  const maxResults = parseInt(document.getElementById('sel-maxresults')?.value || '5');
+  const msgId = createAiMsg();
+  setMsgTag(msgId, 'live research');
+
+  const allResults = { wiki: null, ddg: [], pubmed: [], arxiv: [], openalex: [], wikidata: [] };
+  const bibEntries = [];
+
+  // ── Wikipedia ──
+  if (isOn('wikipedia')) {
+    setFetchRow(msgId, 'wiki', 'active', 'Wikipedia — searching…');
+    try {
+      const wd = await fetchWikipedia(query, maxResults);
+      allResults.wiki = wd;
+      bibEntries.push({ name:'Wikipedia', desc:`Encyclopedia article: "${wd.summary?.title||query}"`, url:'en.wikipedia.org', tag:'edu' });
+      setFetchRow(msgId, 'wiki', 'done', `Wikipedia — ${wd.results.length} results`);
+    } catch(e) { setFetchRow(msgId, 'wiki', 'error', 'Wikipedia — failed: ' + e.message); }
+  } else { setFetchRow(msgId, 'wiki', 'skip', 'Wikipedia — skipped'); }
+
+  // ── DuckDuckGo ──
+  if (isOn('duckduckgo')) {
+    setFetchRow(msgId, 'ddg', 'active', 'DuckDuckGo — fetching instant answer…');
+    try {
+      allResults.ddg = await fetchDuckDuckGo(query);
+      if (allResults.ddg.length) {
+        bibEntries.push({ name:'DuckDuckGo', desc:'Instant answers & related topics', url:'duckduckgo.com', tag:'edu' });
+        setFetchRow(msgId, 'ddg', 'done', `DuckDuckGo — ${allResults.ddg.length} results`);
+      } else {
+        setFetchRow(msgId, 'ddg', 'done', 'DuckDuckGo — no instant answer');
+      }
+    } catch(e) { setFetchRow(msgId, 'ddg', 'error', 'DuckDuckGo — failed: ' + e.message); }
+  } else { setFetchRow(msgId, 'ddg', 'skip', 'DuckDuckGo — skipped'); }
+
+  // ── PubMed ──
+  if (isOn('pubmed') && SETTINGS.medical) {
+    setFetchRow(msgId, 'pubmed', 'active', 'PubMed — searching medical literature…');
+    try {
+      allResults.pubmed = await fetchPubMed(query, maxResults);
+      if (allResults.pubmed.length) {
+        bibEntries.push({ name:'PubMed / NCBI', desc:`${allResults.pubmed.length} biomedical papers`, url:'pubmed.ncbi.nlm.nih.gov', tag:'med' });
+        setFetchRow(msgId, 'pubmed', 'done', `PubMed — ${allResults.pubmed.length} papers`);
+      } else { setFetchRow(msgId, 'pubmed', 'done', 'PubMed — no results'); }
+    } catch(e) { setFetchRow(msgId, 'pubmed', 'error', 'PubMed — failed: ' + e.message); }
+  } else { setFetchRow(msgId, 'pubmed', 'skip', 'PubMed — skipped'); }
+
+  // ── arXiv ──
+  if (isOn('arxiv') && SETTINGS.papers) {
+    setFetchRow(msgId, 'arxiv', 'active', 'arXiv — searching preprints…');
+    try {
+      allResults.arxiv = await fetchArxiv(query, maxResults);
+      if (allResults.arxiv.length) {
+        bibEntries.push({ name:'arXiv', desc:`${allResults.arxiv.length} preprint papers`, url:'arxiv.org', tag:'sci' });
+        setFetchRow(msgId, 'arxiv', 'done', `arXiv — ${allResults.arxiv.length} papers`);
+      } else { setFetchRow(msgId, 'arxiv', 'done', 'arXiv — no results'); }
+    } catch(e) { setFetchRow(msgId, 'arxiv', 'error', 'arXiv — failed: ' + e.message); }
+  } else { setFetchRow(msgId, 'arxiv', 'skip', 'arXiv — skipped'); }
+
+  // ── OpenAlex ──
+  if (isOn('openalex') && SETTINGS.papers) {
+    setFetchRow(msgId, 'openalex', 'active', 'OpenAlex — searching academic works…');
+    try {
+      allResults.openalex = await fetchOpenAlex(query, maxResults);
+      if (allResults.openalex.length) {
+        bibEntries.push({ name:'OpenAlex', desc:`${allResults.openalex.length} academic works`, url:'openalex.org', tag:'sci' });
+        setFetchRow(msgId, 'openalex', 'done', `OpenAlex — ${allResults.openalex.length} works`);
+      } else { setFetchRow(msgId, 'openalex', 'done', 'OpenAlex — no results'); }
+    } catch(e) { setFetchRow(msgId, 'openalex', 'error', 'OpenAlex — failed: ' + e.message); }
+  } else { setFetchRow(msgId, 'openalex', 'skip', 'OpenAlex — skipped'); }
+
+  // ── Wikidata ──
+  if (isOn('wikidata')) {
+    setFetchRow(msgId, 'wikidata', 'active', 'Wikidata — querying structured data…');
+    try {
+      allResults.wikidata = await fetchWikidata(query);
+      if (allResults.wikidata.length) {
+        bibEntries.push({ name:'Wikidata', desc:'Structured knowledge base', url:'wikidata.org', tag:'data' });
+        setFetchRow(msgId, 'wikidata', 'done', `Wikidata — ${allResults.wikidata.length} entities`);
+      } else { setFetchRow(msgId, 'wikidata', 'done', 'Wikidata — no results'); }
+    } catch(e) { setFetchRow(msgId, 'wikidata', 'error', 'Wikidata — failed: ' + e.message); }
+  } else { setFetchRow(msgId, 'wikidata', 'skip', 'Wikidata — skipped'); }
+
+  // ── RENDER RESULTS ──
+  // Hide fetch status
+  const statusEl = document.getElementById(msgId + '_status');
+  if (statusEl) statusEl.style.display = 'none';
+
+  const contentEl = document.getElementById(msgId + '_content');
+  if (!contentEl) { setBusy(false); return; }
+
+  const totalResults = (allResults.wiki?.results?.length||0) + allResults.ddg.length + allResults.pubmed.length + allResults.arxiv.length + allResults.openalex.length + allResults.wikidata.length;
+
+  if (totalResults === 0 && !allResults.wiki?.summary) {
+    contentEl.innerHTML = `<div class="no-results">No results found for "${esc(query)}". Try different keywords.</div>`;
+    setBusy(false);
+    setBadge('done','std');
+    return;
+  }
+
+  let html = '';
+
+  // Stats row
+  const statParts = [];
+  if (allResults.wiki?.results?.length) statParts.push(`<span>${allResults.wiki.results.length}</span> Wikipedia`);
+  if (allResults.pubmed.length) statParts.push(`<span>${allResults.pubmed.length}</span> PubMed`);
+  if (allResults.arxiv.length) statParts.push(`<span>${allResults.arxiv.length}</span> arXiv`);
+  if (allResults.openalex.length) statParts.push(`<span>${allResults.openalex.length}</span> OpenAlex`);
+  if (allResults.ddg.length) statParts.push(`<span>${allResults.ddg.length}</span> DuckDuckGo`);
+  if (allResults.wikidata.length) statParts.push(`<span>${allResults.wikidata.length}</span> Wikidata`);
+
+  html += `<div class="stats-row">${statParts.map(s=>`<div class="stat-chip">${s}</div>`).join('')}</div>`;
+
+  // Wikipedia Summary box
+  if (SETTINGS.wikisummary && allResults.wiki?.summary?.extract) {
+    const sum = allResults.wiki.summary;
+    html += `<div class="summary-box">
+      <div class="summary-box-label">📖 Wikipedia Summary${sum.title ? ' · ' + esc(sum.title) : ''}</div>
+      <div class="summary-box-text ai-content">${esc(truncate(sum.extract, 800))}</div>
+    </div>`;
+  }
+
+  // DuckDuckGo instant answer
+  if (allResults.ddg.length > 0 && allResults.ddg[0].snippet) {
+    html += renderSection('⚡ DuckDuckGo Instant Answer', allResults.ddg.slice(0,1));
+  }
+
+  // Wikidata
+  if (allResults.wikidata.length > 0) {
+    html += renderSection('🗃 Wikidata Entities', allResults.wikidata);
+  }
+
+  // Wikipedia search results
+  if (allResults.wiki?.results?.length > 0) {
+    html += renderSection('📚 Wikipedia Articles', allResults.wiki.results.slice(0, maxResults));
+  }
+
+  // PubMed
+  if (allResults.pubmed.length > 0) {
+    html += renderSection('🩺 PubMed Medical Literature', allResults.pubmed, true);
+  }
+
+  // arXiv
+  if (allResults.arxiv.length > 0) {
+    html += renderSection('🔬 arXiv Preprints', allResults.arxiv, true);
+  }
+
+  // OpenAlex
+  if (allResults.openalex.length > 0) {
+    html += renderSection('🎓 OpenAlex Academic Works', allResults.openalex, true);
+  }
+
+  // DuckDuckGo related (remaining)
+  if (allResults.ddg.length > 1) {
+    html += renderSection('🔗 Related Topics', allResults.ddg.slice(1));
+  }
+
+  // Bibliography
+  if (bibEntries.length > 0) {
+    const bibId = 'bib_' + Date.now();
+    html += `<div class="bib-wrap${SETTINGS.autobib?' open':''}" id="${bibId}">
+      <div class="bib-hd" onclick="document.getElementById('${bibId}').classList.toggle('open')">
+        <div class="bib-htxt">📚 Sources Used — ${bibEntries.length} databases queried</div>
+        <span class="bib-arr">›</span>
+      </div>
+      <div class="bib-list">
+        ${bibEntries.map((b,i)=>`
+          <div class="bib-entry">
+            <div class="bib-num">[${i+1}]</div>
+            <div class="bib-info">
+              <div class="bib-sn">${esc(b.name)}</div>
+              <div class="bib-sd">${esc(b.desc)}</div>
+              <div class="bib-url" onclick="window.open('https://'+${JSON.stringify(b.url)})">↗ ${esc(b.url)}</div>
+            </div>
+            <div class="bib-st"><span class="stag tag-${b.tag}">${b.tag.toUpperCase()}</span></div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  contentEl.innerHTML = html;
+  setMsgTag(msgId, totalResults + ' results');
+  setBadge(totalResults + ' results', 'lime');
+  scrollBot();
+  setBusy(false);
+}
+
+function renderSection(title, results, hasAuthors=false) {
+  if (!results || !results.length) return '';
+  return `<div class="results-section">
+    <div class="results-section-title">${esc(title)}</div>
+    ${results.map(r => renderCard(r, hasAuthors)).join('')}
+  </div>`;
+}
+
+function renderCard(r, hasAuthors=false) {
+  return `<div class="result-card">
+    <div class="rc-source">${esc(r.source)}</div>
+    <div class="rc-title">${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a>` : esc(r.title)}</div>
+    ${r.snippet ? `<div class="rc-snippet">${esc(r.snippet)}</div>` : ''}
+    ${hasAuthors && r.authors ? `<div class="rc-authors">${esc(r.authors)}</div>` : ''}
+    ${r.date ? `<div class="rc-date">${esc(r.date)}${r.cited ? ' · Cited by ' + r.cited : ''}</div>` : ''}
+  </div>`;
+}
+
+// ═══ INIT ═══
+renderSources();
+</script>
+</body>
+</html>
