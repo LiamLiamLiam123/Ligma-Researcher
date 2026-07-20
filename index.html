@@ -309,6 +309,34 @@ body.compact .results-section{margin-bottom:10px}
 
 /* QUICK ANSWER */
 .quick-answer{font-size:17px;line-height:1.6;color:var(--t1);font-weight:500}
+
+/* BRIEF */
+.brief-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.brief-list li{display:flex;gap:10px;font-size:13.5px;line-height:1.6;color:var(--t2)}
+.brief-bullet{color:var(--lime);flex-shrink:0;margin-top:1px}
+
+/* CATEGORY VIEW */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.cat-card{padding:12px 14px;background:var(--bg2);border:1px solid var(--b1);border-radius:var(--r)}
+.cat-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.cat-card-title{font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;color:var(--t2)}
+.cat-card-count{font-size:10px;font-family:var(--mono);color:var(--lime);background:var(--limebg);padding:2px 7px;border-radius:10px}
+.cat-card-top{font-size:12.5px;color:var(--t1);font-weight:600;margin-bottom:3px;line-height:1.4}
+.cat-card-snip{font-size:11.5px;color:var(--t3);line-height:1.5}
+.cat-card-empty{font-size:11px;color:var(--t4);font-family:var(--mono)}
+
+/* COMPARE */
+.compare-hd{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-bottom:14px}
+.compare-term{font-family:var(--display);font-size:22px;letter-spacing:0.5px;text-align:center;padding:8px;border-radius:var(--r)}
+.compare-term.a{background:rgba(77,141,255,0.08);color:var(--blue)}
+.compare-term.b{background:rgba(255,68,170,0.08);color:var(--pink)}
+.compare-vs{font-family:var(--mono);font-size:11px;color:var(--t3)}
+.compare-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.compare-col{padding:13px 15px;border-radius:var(--r);border:1px solid var(--b1);background:var(--bg2)}
+.compare-col-text{font-size:12.5px;line-height:1.7;color:var(--t2)}
+.compare-stat{font-size:10px;font-family:var(--mono);color:var(--t3);margin-top:8px}
+.compare-stat b{color:var(--lime)}
+.compare-fallback{padding:12px 14px;background:var(--amberbg);border:1px solid var(--amberbdr);border-radius:var(--r);font-size:12px;color:var(--amber);margin-bottom:14px;font-family:var(--mono);line-height:1.6}
 </style>
 </head>
 <body>
@@ -384,6 +412,18 @@ body.compact .results-section{margin-bottom:10px}
       <button class="mode-btn" data-mode="factcheck" onclick="setMode(this)">
         <div class="mode-dot"></div>
         <div class="mode-meta"><div class="mode-name">🔍 Fact Check</div><div class="mode-hint">Corroboration across independent sources</div></div>
+      </button>
+      <button class="mode-btn" data-mode="compare" onclick="setMode(this)">
+        <div class="mode-dot"></div>
+        <div class="mode-meta"><div class="mode-name">🆚 Compare</div><div class="mode-hint">"X vs Y" — side-by-side head to head</div></div>
+      </button>
+      <button class="mode-btn" data-mode="brief" onclick="setMode(this)">
+        <div class="mode-dot"></div>
+        <div class="mode-meta"><div class="mode-name">📋 Brief</div><div class="mode-hint">Key points as a scannable bullet list</div></div>
+      </button>
+      <button class="mode-btn" data-mode="category" onclick="setMode(this)">
+        <div class="mode-dot"></div>
+        <div class="mode-meta"><div class="mode-name">🗂 Category View</div><div class="mode-hint">Results grouped by Reference/Medical/Academic/Dev/News</div></div>
       </button>
     </div>
   </div>
@@ -633,7 +673,7 @@ function setMode(btn){
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   currentMode = btn.dataset.mode;
-  const labels={standard:'⚡ standard',think:'🧠 think',deep:'🔬 deep',eli5:'🧒 eli5',debate:'⚖️ debate',timeline:'📅 timeline',quick:'🎯 quick',academic:'🎓 academic',factcheck:'🔍 fact check'};
+  const labels={standard:'⚡ standard',think:'🧠 think',deep:'🔬 deep',eli5:'🧒 eli5',debate:'⚖️ debate',timeline:'📅 timeline',quick:'🎯 quick',academic:'🎓 academic',factcheck:'🔍 fact check',compare:'🆚 compare',brief:'📋 brief',category:'🗂 category'};
   document.getElementById('modePill').textContent = labels[currentMode]||currentMode;
 }
 
@@ -709,7 +749,7 @@ function createAiMsg(){
   const msgs=document.getElementById('messages');
   const id='aim_'+Date.now();
   const g=document.createElement('div');g.className='mgroup';
-  const mLabels={standard:'⚡ standard',think:'🧠 think',deep:'🔬 deep research',eli5:'🧒 eli5',debate:'⚖️ debate',timeline:'📅 timeline',quick:'🎯 quick answer',academic:'🎓 academic',factcheck:'🔍 fact check'};
+  const mLabels={standard:'⚡ standard',think:'🧠 think',deep:'🔬 deep research',eli5:'🧒 eli5',debate:'⚖️ debate',timeline:'📅 timeline',quick:'🎯 quick answer',academic:'🎓 academic',factcheck:'🔍 fact check',compare:'🆚 compare',brief:'📋 brief',category:'🗂 category view'};
   g.innerHTML=`<div class="ai-row">
     <div class="ai-hd">
       <div class="ai-av">L</div>
@@ -1090,6 +1130,14 @@ function synthesise(query, data, mode) {
     return {title:topTitle, body:'', thinking:null, paperCount, sourcesHit:sourcesHit.length, factcheckData:buildFactCheck(query,allSnippets)};
   }
 
+  else if(mode==='brief'){
+    return {title:topTitle, body:'', thinking:null, paperCount, sourcesHit:sourcesHit.length, briefPoints:buildBrief(wikiText,allSnippets)};
+  }
+
+  else if(mode==='category'){
+    return {title:topTitle, body:'', thinking:null, paperCount, sourcesHit:sourcesHit.length, categoryData:buildCategoryView(data)};
+  }
+
   return {title:topTitle, body, thinking, paperCount, sourcesHit:sourcesHit.length};
 }
 
@@ -1147,6 +1195,51 @@ function buildDebate(query, snippets, wikiText){
 // Crude corroboration heuristic: counts how many *distinct* sources returned
 // a snippet at all. This measures source overlap, not truth — labeled as such
 // in the UI. Real fact-checking needs claim-level entailment, which this can't do.
+function buildBrief(wikiText, snippets){
+  // Pull distinct, substantive sentences from the strongest sources and cap at 6.
+  const pool = [wikiText, ...snippets.map(s=>s.text)].filter(Boolean);
+  const sentences = [];
+  pool.forEach(text=>{
+    (text.match(/[^.!?]+[.!?]+/g)||[]).forEach(s=>{
+      s=s.trim();
+      if(s.length>35 && s.length<240) sentences.push(s);
+    });
+  });
+  const seen=new Set(), out=[];
+  for(const s of sentences){
+    const key=s.slice(0,40).toLowerCase();
+    if(seen.has(key))continue;
+    seen.add(key);
+    out.push(s);
+    if(out.length>=6)break;
+  }
+  return out;
+}
+
+// Maps each internal data-store key to the human category it belongs to,
+// so Category View can bucket already-fetched results without re-querying.
+const CATEGORY_MAP = {
+  edu:{label:'Reference',keys:['wiki','ddg','openlibrary']},
+  data:{label:'Structured Data',keys:['wikidata','restcountries']},
+  med:{label:'Medical',keys:['pubmed','europepmc','openfda']},
+  sci:{label:'Academic & Science',keys:['arxiv','openalex','crossref','doaj','semantics','nasa']},
+  dev:{label:'Developer',keys:['github','stackx']},
+  news:{label:'News & Discussion',keys:['hackernews']},
+};
+function buildCategoryView(data){
+  const cats=[];
+  Object.values(CATEGORY_MAP).forEach(cfg=>{
+    let items=[];
+    cfg.keys.forEach(k=>{
+      const v=data[k];
+      if(Array.isArray(v)) items=items.concat(v);
+      else if(v?.results) items=items.concat(v.results);
+    });
+    cats.push({label:cfg.label, count:items.length, top:items[0]||null});
+  });
+  return cats;
+}
+
 function buildFactCheck(query, snippets){
   const bySource = {};
   snippets.forEach(s=>{ if(!bySource[s.src]) bySource[s.src]=s.text; });
@@ -1311,6 +1404,35 @@ function renderOutput(mid, query, synth, data, bibEntries){
     </div>`;
   }
 
+  else if(mode==='brief' && synth.briefPoints){
+    const bp=synth.briefPoints;
+    html+=`<div class="summary-block">
+      <div class="summary-mode-label">📋 BRIEF <span>· ${esc(query)}</span></div>
+      <div class="summary-title">${esc(synth.title)}</div>
+      ${bp.length?`<ul class="brief-list">${bp.map(p=>`<li><span class="brief-bullet">▸</span><span>${esc(p)}</span></li>`).join('')}</ul>`:
+        `<div style="color:var(--t3);font-size:12px;font-family:var(--mono)">Not enough text returned to build a bullet brief — try Standard mode instead.</div>`}
+      <div class="summary-meta">
+        <div class="smeta-chip"><b>${bp.length}</b> key points</div>
+        <div class="smeta-chip"><b>${synth.sourcesHit}</b> sources</div>
+      </div>
+    </div>`;
+  }
+
+  else if(mode==='category' && synth.categoryData){
+    const cd=synth.categoryData;
+    html+=`<div class="summary-block">
+      <div class="summary-mode-label">🗂 CATEGORY VIEW <span>· ${esc(query)}</span></div>
+      <div class="summary-title">${esc(synth.title)}</div>
+      <div class="cat-grid">
+        ${cd.map(c=>`
+          <div class="cat-card">
+            <div class="cat-card-hd"><div class="cat-card-title">${esc(c.label)}</div><div class="cat-card-count">${c.count}</div></div>
+            ${c.top?`<div class="cat-card-top">${esc(trunc(c.top.title||'',70))}</div><div class="cat-card-snip">${esc(trunc(c.top.snippet||'',110))}</div>`:'<div class="cat-card-empty">No results in this category</div>'}
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
   else if(synth.body){
     const modeMeta={standard:{label:'⚡ STANDARD SUMMARY',cls:''},think:{label:'🧠 THINK — ANALYTICAL SUMMARY',cls:'mode-think'},deep:{label:'🔬 DEEP RESEARCH SUMMARY',cls:'mode-deep'},eli5:{label:'🧒 ELI5 — SIMPLE EXPLANATION',cls:'mode-eli5'},quick:{label:'🎯 QUICK ANSWER',cls:'mode-eli5'}}[mode]||{label:mode,cls:''};
     html+=`<div class="summary-block ${modeMeta.cls}">
@@ -1391,6 +1513,7 @@ function renderSec(title, results, showAuthors=false){
 // MAIN ORCHESTRATOR — sources fetched in parallel
 // ══════════════════════════════════════════
 async function doResearch(query){
+  if(currentMode==='compare'){ return doCompareResearch(query); }
   const max = parseInt(document.getElementById('sel-max')?.value||'5');
   const mid = createAiMsg();
 
@@ -1454,6 +1577,91 @@ async function doResearch(query){
   document.getElementById(mid+'_tag').textContent=total+' results';
   setBadge(total+' results','lime');
   setBusy(false);
+}
+
+// ══════════════════════════════════════════
+// COMPARE MODE — lightweight two-entity fetch, separate from the
+// main 16-source pipeline (comparison only needs an overview per side)
+// ══════════════════════════════════════════
+function splitCompareQuery(q){
+  const patterns=[/\s+vs\.?\s+/i, /\s+versus\s+/i, /\s+or\s+/i];
+  for(const p of patterns){
+    if(p.test(q)){
+      const parts=q.split(p);
+      if(parts.length===2 && parts[0].trim() && parts[1].trim()) return [parts[0].trim(), parts[1].trim()];
+    }
+  }
+  return null;
+}
+
+async function fEntityProfile(term){
+  const out={term, extract:'', url:'', worksCount:null};
+  try{
+    const wiki=await fWikipedia(term,1);
+    if(wiki.summary){ out.extract=wiki.summary.extract||''; out.url=wiki.summary.content_urls?.desktop?.page||''; }
+  }catch(e){}
+  if(!out.extract){
+    try{ const ddg=await fDDG(term); if(ddg[0]?.snippet){ out.extract=ddg[0].snippet; out.url=out.url||ddg[0].url||''; } }catch(e){}
+  }
+  try{
+    const r=await fetchWithTimeout(`https://api.openalex.org/works?search=${encodeURIComponent(term)}&per-page=1&mailto=ligma@research.app`);
+    const d=await r.json();
+    out.worksCount = d.meta?.count ?? null;
+  }catch(e){}
+  return out;
+}
+
+async function doCompareResearch(query){
+  const mid = createAiMsg();
+  const terms = splitCompareQuery(query);
+
+  if(!terms){
+    setFR(mid,'parse','error','Could not find a comparison — expected "X vs Y"');
+    const fs=document.getElementById(mid+'_fs'); if(fs && !SETTINGS.keeplog)fs.style.display='none';
+    document.getElementById(mid+'_out').innerHTML=`<div class="compare-fallback">Couldn't detect two things to compare in "${esc(query)}". Try a query with "vs" or "versus" in it, e.g. "Python vs JavaScript".</div>`;
+    document.getElementById(mid+'_tag').textContent='no comparison detected';
+    setBadge('needs "vs"','amber');
+    setBusy(false);
+    return;
+  }
+
+  const [a,b]=terms;
+  setFR(mid,'a',`active`,`${a} — fetching…`);
+  setFR(mid,'b',`active`,`${b} — fetching…`);
+  const [pa,pb]=await Promise.all([
+    fEntityProfile(a).then(p=>{setFR(mid,'a','done',`${a} — profile ready`);return p;}).catch(e=>{setFR(mid,'a','error',`${a} — failed`);return{term:a,extract:'',url:'',worksCount:null};}),
+    fEntityProfile(b).then(p=>{setFR(mid,'b','done',`${b} — profile ready`);return p;}).catch(e=>{setFR(mid,'b','error',`${b} — failed`);return{term:b,extract:'',url:'',worksCount:null};}),
+  ]);
+
+  const fs=document.getElementById(mid+'_fs');
+  if(fs && !SETTINGS.keeplog)fs.style.display='none';
+
+  const html=`<div class="summary-block mode-debate">
+    <div class="summary-mode-label">🆚 COMPARE <span>· ${esc(query)}</span></div>
+    <div class="compare-hd">
+      <div class="compare-term a">${esc(pa.term)}</div>
+      <div class="compare-vs">VS</div>
+      <div class="compare-term b">${esc(pb.term)}</div>
+    </div>
+    <div class="compare-cols">
+      <div class="compare-col">
+        <div class="compare-col-text">${pa.extract?esc(trunc(pa.extract,420)):'<span style="color:var(--t3)">No overview found</span>'}</div>
+        ${pa.url?`<div class="compare-stat"><a href="${esc(pa.url)}" target="${SETTINGS.newtab?'_blank':'_self'}" rel="noopener" style="color:var(--lime)">↗ source</a></div>`:''}
+        ${pa.worksCount!=null?`<div class="compare-stat"><b>${pa.worksCount.toLocaleString()}</b> OpenAlex works mention this</div>`:''}
+      </div>
+      <div class="compare-col">
+        <div class="compare-col-text">${pb.extract?esc(trunc(pb.extract,420)):'<span style="color:var(--t3)">No overview found</span>'}</div>
+        ${pb.url?`<div class="compare-stat"><a href="${esc(pb.url)}" target="${SETTINGS.newtab?'_blank':'_self'}" rel="noopener" style="color:var(--lime)">↗ source</a></div>`:''}
+        ${pb.worksCount!=null?`<div class="compare-stat"><b>${pb.worksCount.toLocaleString()}</b> OpenAlex works mention this</div>`:''}
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById(mid+'_out').innerHTML=html;
+  document.getElementById(mid+'_tag').textContent='2 profiles compared';
+  setBadge('compared','lime');
+  setBusy(false);
+  scrollBot();
 }
 
 // INIT
