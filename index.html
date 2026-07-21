@@ -337,6 +337,39 @@ body.compact .results-section{margin-bottom:10px}
 .compare-stat{font-size:10px;font-family:var(--mono);color:var(--t3);margin-top:8px}
 .compare-stat b{color:var(--lime)}
 .compare-fallback{padding:12px 14px;background:var(--amberbg);border:1px solid var(--amberbdr);border-radius:var(--r);font-size:12px;color:var(--amber);margin-bottom:14px;font-family:var(--mono);line-height:1.6}
+
+/* MESSAGE ACTIONS TOOLBAR */
+.msg-actions{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.msg-action-btn{padding:4px 9px;border-radius:6px;border:1px solid var(--b2);background:var(--bg3);color:var(--t2);font-family:var(--mono);font-size:10px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:4px}
+.msg-action-btn:hover{border-color:var(--limebdr);color:var(--lime);background:var(--limebg)}
+
+/* TL;DR (universal summary shown for modes without a plain-language summary) */
+.tldr-block{margin-bottom:14px;padding:11px 14px;background:var(--bg3);border-left:2px solid var(--lime);border-radius:0 var(--r) var(--r) 0}
+.tldr-label{font-size:8.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.4px;color:var(--lime);margin-bottom:4px}
+.tldr-text{font-size:12.5px;line-height:1.6;color:var(--t2)}
+
+/* PER-CARD CITE BUTTON */
+.result-card{position:relative}
+.rc-cite-btn{position:absolute;top:9px;right:10px;padding:2px 7px;border-radius:5px;border:1px solid var(--b2);background:var(--bg3);color:var(--t3);font-family:var(--mono);font-size:9px;cursor:pointer;transition:all 0.15s;opacity:0;}
+.result-card:hover .rc-cite-btn{opacity:1}
+.rc-cite-btn:hover{color:var(--lime);border-color:var(--limebdr)}
+
+/* SIDEBAR FOOTER — session stats */
+.sidebar-footer{padding:8px 12px;border-top:1px solid var(--b1);font-size:9px;font-family:var(--mono);color:var(--t3);text-align:center;flex-shrink:0;letter-spacing:0.2px}
+.sidebar-footer b{color:var(--lime)}
+
+/* PINNED MESSAGE */
+.mgroup.pinned .ai-body{border-left:2px solid var(--lime);padding-left:14px}
+.mgroup.pinned .ai-name::after{content:' · pinned';color:var(--lime);font-size:10px;font-weight:400}
+
+/* LIGHT THEME */
+body.light-theme{
+  --bg:#f4f4f9;--bg2:#ffffff;--bg3:#eceef5;--bg4:#e2e4ef;--bg5:#d3d5e4;--bg6:#c2c4d8;
+  --b1:rgba(20,20,45,0.07);--b2:rgba(20,20,45,0.13);--b3:rgba(20,20,45,0.22);--b4:rgba(20,20,45,0.32);
+  --t1:#14141f;--t2:#4b4b66;--t3:#82829c;--t4:#c4c4d8;
+}
+body.light-theme .logo-mark-letter,body.light-theme .ai-av{color:#07070b}
+body.light-theme .send-btn svg{stroke:#07070b}
 </style>
 </head>
 <body>
@@ -434,6 +467,9 @@ body.compact .results-section{margin-bottom:10px}
       <button class="bulk-btn" onclick="bulkSrc(true)">All On</button>
       <button class="bulk-btn" onclick="bulkSrc(false)">All Off</button>
       <button class="bulk-btn" onclick="bulkTrusted()">Trusted Only</button>
+      <button class="bulk-btn" onclick="applyPreset('med')">🩺 Medical Focus</button>
+      <button class="bulk-btn" onclick="applyPreset('dev')">💻 Developer Focus</button>
+      <button class="bulk-btn" onclick="applyPreset('news')">📰 News Focus</button>
     </div>
     <div class="panel-scroll" id="sourceList"></div>
   </div>
@@ -458,6 +494,14 @@ body.compact .results-section{margin-bottom:10px}
             <option value="5" selected>5 per source</option>
             <option value="8">8 per source</option>
             <option value="10">10 per source</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Sort Raw Results By</div>
+          <select class="setting-select" id="sel-sort">
+            <option value="relevance" selected>Relevance (default)</option>
+            <option value="newest">Newest first</option>
+            <option value="cited">Most cited / starred</option>
           </select>
         </div>
       </div>
@@ -492,6 +536,10 @@ body.compact .results-section{margin-bottom:10px}
           <div class="setting-head"><div class="setting-label">Compact Density</div><div class="toggle" id="tog-compact" onclick="toggleCompact()"></div></div>
           <div class="setting-desc">Tighter cards, clamped snippets — fit more on screen.</div>
         </div>
+        <div class="setting-row">
+          <div class="setting-head"><div class="setting-label">Light Theme</div><div class="toggle" id="tog-lighttheme" onclick="toggleLightTheme()"></div></div>
+          <div class="setting-desc">Swap the dark palette for a light one.</div>
+        </div>
       </div>
       <div class="sgroup">
         <div class="sgroup-title">Network</div>
@@ -515,6 +563,7 @@ body.compact .results-section{margin-bottom:10px}
       </div>
     </div>
   </div>
+  <div class="sidebar-footer" id="sidebarFooter">0 searches · 0 sources hit · 0 results</div>
 </div>
 
 <!-- ══════════ MAIN ══════════ -->
@@ -559,12 +608,14 @@ body.compact .results-section{margin-bottom:10px}
       <div class="input-wrap">
         <textarea class="input-ta" id="queryInput" rows="1"
           placeholder="Search anything — topic, question, concept…"
-          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          onkeydown="handleKey(event)" oninput="autoResize(this);updateCharCounter(this)"></textarea>
         <button class="send-btn" id="sendBtn" onclick="submit()">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
-      <div class="input-foot">Ligma Research · Real APIs · No AI · No keys · No servers · Open source data</div>
+      <div class="input-foot">
+        <span id="charCounter">Ligma Research · Real APIs · No AI · No keys · No servers · Open source data</span>
+      </div>
     </div>
   </div>
 </div>
@@ -623,10 +674,27 @@ function toggleCompact(){
   document.body.classList.toggle('compact');
   document.getElementById('tog-compact')?.classList.toggle('on', document.body.classList.contains('compact'));
 }
+function toggleLightTheme(){
+  document.body.classList.toggle('light-theme');
+  document.getElementById('tog-lighttheme')?.classList.toggle('on', document.body.classList.contains('light-theme'));
+}
 function setTimeoutSec(v){
   requestTimeoutMs = parseInt(v)*1000;
   document.getElementById('timeoutLbl').textContent = v+'s';
 }
+
+// ══ SESSION STATS ══
+let sessionStats = {searches:0, sourcesHit:0, totalResults:0};
+function updateSessionStats(sourcesHitCount, resultsCount){
+  sessionStats.searches++;
+  sessionStats.sourcesHit += (sourcesHitCount||0);
+  sessionStats.totalResults += (resultsCount||0);
+  const el=document.getElementById('sidebarFooter');
+  if(el) el.innerHTML = `<b>${sessionStats.searches}</b> searches · <b>${sessionStats.sourcesHit}</b> sources hit · <b>${sessionStats.totalResults}</b> results`;
+}
+
+// Safely embed arbitrary text inside a single-quoted HTML onclick attribute
+function escJs(s){ return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' '); }
 
 // ══ SIDEBAR ══
 function renderSources() {
@@ -655,6 +723,16 @@ function toggleSrc(id) {
 }
 function bulkSrc(v){SOURCES_CFG.forEach(s=>{s.on=v;document.getElementById('src_'+s.id)?.classList.toggle('on',v);});updateCount();}
 function bulkTrusted(){SOURCES_CFG.forEach(s=>{s.on=s.trusted;document.getElementById('src_'+s.id)?.classList.toggle('on',s.on);});updateCount();}
+// Quick presets: turn on only the sources for a given category (plus
+// Wikipedia/DDG as a general-knowledge anchor), turn everything else off.
+function applyPreset(tag){
+  SOURCES_CFG.forEach(s=>{
+    s.on = (s.tag===tag) || s.id==='wikipedia' || s.id==='duckduckgo';
+    document.getElementById('src_'+s.id)?.classList.toggle('on',s.on);
+  });
+  updateCount();
+  switchTabById('sources');
+}
 function updateCount(){
   const n=SOURCES_CFG.filter(s=>s.on).length;
   document.getElementById('srcPill').textContent=n+' sources';
@@ -686,9 +764,30 @@ function setFontSize(v){
 }
 
 // ══ UTILS ══
-function fillQ(t){const ta=document.getElementById('queryInput');ta.value=t;autoResize(ta);ta.focus();}
+function fillQ(t){const ta=document.getElementById('queryInput');ta.value=t;autoResize(ta);updateCharCounter(ta);ta.focus();}
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,180)+'px';}
-function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submit();}}
+function handleKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submit();}
+  else if(e.key==='Escape'){e.target.value='';autoResize(e.target);updateCharCounter(e.target);e.target.blur();}
+}
+function updateCharCounter(el){
+  const n=el.value.length;
+  const label=document.getElementById('charCounter');
+  if(!label)return;
+  label.textContent = n>0
+    ? `${n} character${n===1?'':'s'} · Enter to search · Esc to clear`
+    : 'Ligma Research · Real APIs · No AI · No keys · No servers · Open source data';
+}
+// Global shortcuts: "/" or Ctrl/Cmd+K focuses the search box from anywhere,
+// as long as the user isn't already typing in another field.
+document.addEventListener('keydown', function(e){
+  const tag=(document.activeElement?.tagName||'').toLowerCase();
+  const typing = tag==='textarea' || tag==='input' || tag==='select';
+  if((e.key==='/' && !typing) || ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k')){
+    e.preventDefault();
+    document.getElementById('queryInput')?.focus();
+  }
+});
 function newChat(){
   document.getElementById('messages').innerHTML='';
   document.getElementById('welcome').style.display='flex';
@@ -700,6 +799,17 @@ function newChat(){
 function scrollBot(){
   if(!SETTINGS.autoscroll)return;
   setTimeout(()=>{document.getElementById('chatScroll').scrollTop=99999;},120);
+}
+// Once a response has finished rendering, scroll so the READER sees the
+// start of it (title + summary) rather than landing at the bottom of a long
+// results list — matches how the fetch-status phase auto-follows to bottom,
+// but the finished answer should be read from the top.
+function scrollToMsgTop(mid){
+  if(!SETTINGS.autoscroll)return;
+  setTimeout(()=>{
+    const el=document.getElementById(mid+'_group');
+    if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  },150);
 }
 function setBadge(text,type){
   const b=document.getElementById('statusBadge');
@@ -733,7 +843,7 @@ function submit(){
   const q=ta.value.trim();if(!q)return;
   document.getElementById('welcome').style.display='none';
   document.getElementById('topbarTitle').textContent=q.length>55?q.slice(0,55)+'…':q;
-  ta.value='';ta.style.height='auto';
+  ta.value='';ta.style.height='auto';updateCharCounter(ta);
   const msgs=document.getElementById('messages');
   const ug=document.createElement('div');
   ug.className='mgroup';
@@ -745,11 +855,12 @@ function submit(){
 }
 
 // ══ MSG CONTAINER ══
-function createAiMsg(){
+function createAiMsg(query){
   const msgs=document.getElementById('messages');
   const id='aim_'+Date.now();
-  const g=document.createElement('div');g.className='mgroup';
+  const g=document.createElement('div');g.className='mgroup';g.id=id+'_group';
   const mLabels={standard:'⚡ standard',think:'🧠 think',deep:'🔬 deep research',eli5:'🧒 eli5',debate:'⚖️ debate',timeline:'📅 timeline',quick:'🎯 quick answer',academic:'🎓 academic',factcheck:'🔍 fact check',compare:'🆚 compare',brief:'📋 brief',category:'🗂 category view'};
+  const qEsc=escJs(query||'');
   g.innerHTML=`<div class="ai-row">
     <div class="ai-hd">
       <div class="ai-av">L</div>
@@ -758,11 +869,115 @@ function createAiMsg(){
     </div>
     <div class="ai-body">
       <div class="fetch-status" id="${id}_fs"></div>
+      <div class="msg-actions">
+        <button class="msg-action-btn" id="${id}_copybtn" onclick="copyResponse('${id}')" title="Copy response text">⧉ Copy</button>
+        <button class="msg-action-btn" onclick="exportMarkdown('${id}','${qEsc}')" title="Download as Markdown">⬇ .md</button>
+        <button class="msg-action-btn" id="${id}_jsonbtn" onclick="exportJSON('${id}')" title="Download raw structured data as JSON">⬇ .json</button>
+        <button class="msg-action-btn" onclick="retryQuery('${qEsc}')" title="Re-run this search">↻ Retry</button>
+        <button class="msg-action-btn" id="${id}_readbtn" onclick="readAloud('${id}')" title="Read summary aloud">🔊 Listen</button>
+        <button class="msg-action-btn" onclick="printResponse('${id}')" title="Print this response">🖨 Print</button>
+        <button class="msg-action-btn" id="${id}_pinbtn" onclick="togglePin('${id}')" title="Pin this response">☆ Pin</button>
+      </div>
       <div id="${id}_out"></div>
     </div>
   </div>`;
   msgs.appendChild(g);scrollBot();
   return id;
+}
+
+// ══ MESSAGE ACTIONS ══
+function copyResponse(mid){
+  const el=document.getElementById(mid+'_out');
+  if(!el)return;
+  const text=el.innerText||el.textContent||'';
+  const flash=()=>{
+    const btn=document.getElementById(mid+'_copybtn');
+    if(!btn)return;
+    const orig=btn.textContent;
+    btn.textContent='✓ Copied';
+    setTimeout(()=>{btn.textContent=orig;},1400);
+  };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(text).then(flash).catch(()=>fallbackCopy(text,flash));
+  }else{
+    fallbackCopy(text,flash);
+  }
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');
+  ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+  if(cb)cb();
+}
+function exportMarkdown(mid,query){
+  const el=document.getElementById(mid+'_out');
+  if(!el)return;
+  const text=el.innerText||'';
+  const md=`# ${query}\n\n${text}\n\n---\n*Generated by Ligma Research · ${new Date().toISOString().slice(0,10)} · no AI, live public APIs only*`;
+  const blob=new Blob([md],{type:'text/markdown'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=(query.slice(0,40).replace(/[^a-z0-9]+/gi,'-').toLowerCase()||'research')+'.md';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+// Raw structured results per message, kept so "Export JSON" can hand back
+// exactly what each API returned rather than re-scraping rendered HTML.
+const messageRawData = {};
+function exportJSON(mid){
+  const data=messageRawData[mid];
+  if(!data){alert('No structured data available for this response yet.');return;}
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=mid+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function retryQuery(query){
+  if(busy||!query)return;
+  const ta=document.getElementById('queryInput');
+  ta.value=query;
+  submit();
+}
+function readAloud(mid){
+  const el=document.getElementById(mid+'_out');
+  const btn=document.getElementById(mid+'_readbtn');
+  if(!el)return;
+  if(!('speechSynthesis' in window)){alert('Speech synthesis is not supported in this browser.');return;}
+  if(window.speechSynthesis.speaking){
+    window.speechSynthesis.cancel();
+    if(btn)btn.textContent='🔊 Listen';
+    return;
+  }
+  const text=(el.innerText||'').slice(0,3000);
+  if(!text.trim())return;
+  const utter=new SpeechSynthesisUtterance(text);
+  utter.onend=()=>{if(btn)btn.textContent='🔊 Listen';};
+  utter.onerror=()=>{if(btn)btn.textContent='🔊 Listen';};
+  if(btn)btn.textContent='⏸ Stop';
+  window.speechSynthesis.speak(utter);
+}
+function printResponse(mid){
+  const el=document.getElementById(mid+'_out');
+  if(!el)return;
+  const w=window.open('','_blank');
+  if(!w)return;
+  w.document.write(`<html><head><title>Ligma Research — Print</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#111;line-height:1.65;max-width:760px;margin:0 auto}a{color:#0645ad}h1,h2,h3{color:#111}</style></head><body>${el.innerHTML}</body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>{w.print();},350);
+}
+function togglePin(mid){
+  const row=document.getElementById(mid+'_out')?.closest('.mgroup');
+  const btn=document.getElementById(mid+'_pinbtn');
+  if(!row)return;
+  row.classList.toggle('pinned');
+  const pinned=row.classList.contains('pinned');
+  if(btn)btn.textContent=pinned?'★ Pinned':'☆ Pin';
 }
 
 function setFR(mid,src,state,text){
@@ -1017,6 +1232,22 @@ async function fHackerNews(q,max){
 // ══════════════════════════════════════════
 // SYNTHESISER — builds the summary from raw data
 // ══════════════════════════════════════════
+function estimateReadMins(html){
+  if(!html)return 0;
+  const text=String(html).replace(/<[^>]+>/g,' ');
+  const words=text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words/200));
+}
+
+// Universal short summary shown for modes that don't otherwise produce
+// plain-language prose (debate/timeline/academic/factcheck/category).
+function tldr(data){
+  const text=data.wiki?.summary?.extract || data.ddg?.[0]?.snippet || '';
+  if(!text)return'';
+  const sentences=text.match(/[^.!?]+[.!?]+/g)||[text];
+  return trunc(sentences.slice(0,2).join(' ').trim(), 260);
+}
+
 function synthesise(query, data, mode) {
   // Collect all text snippets across sources
   const allSnippets = [];
@@ -1138,7 +1369,7 @@ function synthesise(query, data, mode) {
     return {title:topTitle, body:'', thinking:null, paperCount, sourcesHit:sourcesHit.length, categoryData:buildCategoryView(data)};
   }
 
-  return {title:topTitle, body, thinking, paperCount, sourcesHit:sourcesHit.length};
+  return {title:topTitle, body, thinking, paperCount, sourcesHit:sourcesHit.length, readMins:estimateReadMins(body)};
 }
 
 function mergeText(parts, maxChars){
@@ -1296,6 +1527,13 @@ function renderOutput(mid, query, synth, data, bibEntries){
 
   let html=`<div class="stats-row">${statParts.map(s=>`<div class="stat-chip">${s}</div>`).join('')}</div>`;
 
+  // Universal summary — several modes (debate, timeline, academic, factcheck,
+  // category, compare) don't otherwise surface a plain-language overview.
+  if(['debate','timeline','academic','factcheck','category','brief'].includes(mode)){
+    const tl=tldr(data);
+    if(tl) html+=`<div class="tldr-block"><div class="tldr-label">Summary</div><div class="tldr-text">${esc(tl)}</div></div>`;
+  }
+
   // Thinking block
   if(synth.thinking && SETTINGS.showthink){
     const tid='th_'+Date.now();
@@ -1443,6 +1681,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
         <div class="smeta-chip"><b>${synth.paperCount}</b> academic papers</div>
         <div class="smeta-chip"><b>${synth.sourcesHit}</b> sources</div>
         <div class="smeta-chip"><b>${totalResults}</b> total results</div>
+        ${synth.readMins?`<div class="smeta-chip"><b>${synth.readMins}</b> min read</div>`:''}
       </div>
     </div>`;
   }
@@ -1471,9 +1710,11 @@ function renderOutput(mid, query, synth, data, bibEntries){
   // Bibliography
   if(bibEntries.length){
     const bid='bib_'+Date.now();
+    bibliographyText[bid]=bibEntries.map((b,i)=>`[${i+1}] ${b.name} — ${b.desc} (${b.url})`).join('\n');
     html+=`<div class="bib-wrap${SETTINGS.autobib?' open':''}" id="${bid}">
       <div class="bib-hd" onclick="document.getElementById('${bid}').classList.toggle('open')">
         <div class="bib-htxt">📚 Bibliography — ${bibEntries.length} databases queried</div>
+        <button class="msg-action-btn" style="margin-right:4px" onclick="event.stopPropagation();copyBibliography(this,'${bid}')" title="Copy full bibliography">⧉ Copy all</button>
         <span class="bib-arr">›</span>
       </div>
       <div class="bib-list">
@@ -1492,7 +1733,6 @@ function renderOutput(mid, query, synth, data, bibEntries){
   }
 
   outEl.innerHTML = html;
-  scrollBot();
 }
 
 function renderSec(title, results, showAuthors=false){
@@ -1500,6 +1740,7 @@ function renderSec(title, results, showAuthors=false){
   return`<div class="results-section">
     <div class="sec-title">${esc(title)}</div>
     ${results.map(r=>`<div class="result-card">
+      <button class="rc-cite-btn" onclick="copyCitation(this,'${escJs(r.title)}','${escJs(r.source)}','${escJs(r.url||'')}')" title="Copy citation">⧉ Cite</button>
       <div class="rc-src">${esc(r.source)}</div>
       <div class="rc-title">${r.url?`<a href="${esc(r.url)}" target="${SETTINGS.newtab?'_blank':'_self'}" rel="noopener">${esc(r.title)}</a>`:esc(r.title)}</div>
       ${r.snippet?`<div class="rc-snip">${esc(r.snippet)}</div>`:''}
@@ -1508,6 +1749,25 @@ function renderSec(title, results, showAuthors=false){
     </div>`).join('')}
   </div>`;
 }
+function copyCitation(btn,title,source,url){
+  const text=`${title} — ${source}${url?' ('+url+')':''}`;
+  const done=()=>{const orig=btn.textContent;btn.textContent='✓';setTimeout(()=>{btn.textContent=orig;},1100);};
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+  }else{
+    fallbackCopy(text,done);
+  }
+}
+function copyBibliography(btn,bid){
+  const text=bibliographyText[bid]||'';
+  const done=()=>{const orig=btn.textContent;btn.textContent='✓ Copied';setTimeout(()=>{btn.textContent=orig;},1300);};
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+  }else{
+    fallbackCopy(text,done);
+  }
+}
+const bibliographyText = {};
 
 // ══════════════════════════════════════════
 // MAIN ORCHESTRATOR — sources fetched in parallel
@@ -1515,7 +1775,7 @@ function renderSec(title, results, showAuthors=false){
 async function doResearch(query){
   if(currentMode==='compare'){ return doCompareResearch(query); }
   const max = parseInt(document.getElementById('sel-max')?.value||'5');
-  const mid = createAiMsg();
+  const mid = createAiMsg(query);
 
   // Data store
   const D={wiki:null,ddg:[],wikidata:[],pubmed:[],europepmc:[],arxiv:[],openalex:[],crossref:[],doaj:[],semantics:[],nasa:[],openlibrary:[],github:[],stackx:[],restcountries:[],openfda:[],hackernews:[]};
@@ -1562,6 +1822,10 @@ async function doResearch(query){
   const fs=document.getElementById(mid+'_fs');
   if(fs && !SETTINGS.keeplog)fs.style.display='none';
 
+  // Apply the user's chosen sort order to every raw results array before rendering
+  applySortSetting(D);
+  messageRawData[mid]=D;
+
   // Synthesise
   const synth=synthesise(query,D,currentMode);
 
@@ -1576,7 +1840,20 @@ async function doResearch(query){
 
   document.getElementById(mid+'_tag').textContent=total+' results';
   setBadge(total+' results','lime');
+  updateSessionStats(synth.sourcesHit, total);
   setBusy(false);
+  scrollToMsgTop(mid);
+}
+
+function applySortSetting(D){
+  const mode=document.getElementById('sel-sort')?.value||'relevance';
+  if(mode==='relevance')return; // keep each API's own relevance ranking
+  const byDate=(a,b)=>(b.date||'').localeCompare(a.date||'');
+  const byCited=(a,b)=>(b.cited||0)-(a.cited||0);
+  const cmp=mode==='newest'?byDate:byCited;
+  Object.keys(D).forEach(k=>{
+    if(Array.isArray(D[k]))D[k].sort(cmp);
+  });
 }
 
 // ══════════════════════════════════════════
@@ -1612,7 +1889,7 @@ async function fEntityProfile(term){
 }
 
 async function doCompareResearch(query){
-  const mid = createAiMsg();
+  const mid = createAiMsg(query);
   const terms = splitCompareQuery(query);
 
   if(!terms){
@@ -1622,6 +1899,7 @@ async function doCompareResearch(query){
     document.getElementById(mid+'_tag').textContent='no comparison detected';
     setBadge('needs "vs"','amber');
     setBusy(false);
+    scrollToMsgTop(mid);
     return;
   }
 
@@ -1635,9 +1913,11 @@ async function doCompareResearch(query){
 
   const fs=document.getElementById(mid+'_fs');
   if(fs && !SETTINGS.keeplog)fs.style.display='none';
+  messageRawData[mid]={a:pa,b:pb};
 
   const html=`<div class="summary-block mode-debate">
     <div class="summary-mode-label">🆚 COMPARE <span>· ${esc(query)}</span></div>
+    <div class="tldr-block"><div class="tldr-label">Summary</div><div class="tldr-text">Head-to-head overview of <strong style="color:var(--t1)">${esc(pa.term)}</strong> and <strong style="color:var(--t1)">${esc(pb.term)}</strong>, drawn from Wikipedia/DuckDuckGo overviews and OpenAlex academic mention counts for each.</div></div>
     <div class="compare-hd">
       <div class="compare-term a">${esc(pa.term)}</div>
       <div class="compare-vs">VS</div>
@@ -1660,8 +1940,9 @@ async function doCompareResearch(query){
   document.getElementById(mid+'_out').innerHTML=html;
   document.getElementById(mid+'_tag').textContent='2 profiles compared';
   setBadge('compared','lime');
+  updateSessionStats(2, (pa.extract?1:0)+(pb.extract?1:0));
   setBusy(false);
-  scrollBot();
+  scrollToMsgTop(mid);
 }
 
 // INIT
