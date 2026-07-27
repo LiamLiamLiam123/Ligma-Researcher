@@ -166,7 +166,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .spinner{width:10px;height:10px;border:1.5px solid rgba(255,184,0,0.2);border-top-color:var(--amber);border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* SUMMARY BLOCK — main hero result */
+/* SUMMARY BLOCK - main hero result */
 .summary-block{margin-bottom:18px;padding:18px 20px;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--rl);position:relative;overflow:hidden}
 .summary-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--lime)}
 .summary-mode-label{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1.4px;color:var(--lime);margin-bottom:8px;display:flex;align-items:center;gap:6px}
@@ -354,7 +354,7 @@ body.compact .results-section{margin-bottom:10px}
 .result-card:hover .rc-cite-btn{opacity:1}
 .rc-cite-btn:hover{color:var(--lime);border-color:var(--limebdr)}
 
-/* SIDEBAR FOOTER — session stats */
+/* SIDEBAR FOOTER - session stats */
 .sidebar-footer{padding:8px 12px;border-top:1px solid var(--b1);font-size:9px;font-family:var(--mono);color:var(--t3);text-align:center;flex-shrink:0;letter-spacing:0.2px}
 .sidebar-footer b{color:var(--lime)}
 
@@ -424,11 +424,11 @@ body.light-theme .send-btn svg{stroke:#07070b}
       </button>
       <button class="mode-btn" data-mode="eli5" onclick="setMode(this)">
         <div class="mode-dot"></div>
-        <div class="mode-meta"><div class="mode-name">🧒 ELI5</div><div class="mode-hint">Explain Like I'm 5 — simple, fun, clear</div></div>
+        <div class="mode-meta"><div class="mode-name">🧒 ELI5</div><div class="mode-hint">Explain Like I'm 5 - simple, fun, clear</div></div>
       </button>
       <button class="mode-btn" data-mode="debate" onclick="setMode(this)">
         <div class="mode-dot"></div>
-        <div class="mode-meta"><div class="mode-name">⚖️ Debate</div><div class="mode-hint">Pro vs Con — steelman both sides</div></div>
+        <div class="mode-meta"><div class="mode-name">⚖️ Debate</div><div class="mode-hint">Pro vs Con - steelman both sides</div></div>
       </button>
       <button class="mode-btn" data-mode="timeline" onclick="setMode(this)">
         <div class="mode-dot"></div>
@@ -448,7 +448,7 @@ body.light-theme .send-btn svg{stroke:#07070b}
       </button>
       <button class="mode-btn" data-mode="compare" onclick="setMode(this)">
         <div class="mode-dot"></div>
-        <div class="mode-meta"><div class="mode-name">🆚 Compare</div><div class="mode-hint">"X vs Y" — side-by-side head to head</div></div>
+        <div class="mode-meta"><div class="mode-name">🆚 Compare</div><div class="mode-hint">"X vs Y" - side-by-side head to head</div></div>
       </button>
       <button class="mode-btn" data-mode="brief" onclick="setMode(this)">
         <div class="mode-dot"></div>
@@ -534,7 +534,7 @@ body.light-theme .send-btn svg{stroke:#07070b}
         </div>
         <div class="setting-row">
           <div class="setting-head"><div class="setting-label">Compact Density</div><div class="toggle" id="tog-compact" onclick="toggleCompact()"></div></div>
-          <div class="setting-desc">Tighter cards, clamped snippets — fit more on screen.</div>
+          <div class="setting-desc">Tighter cards, clamped snippets - fit more on screen.</div>
         </div>
         <div class="setting-row">
           <div class="setting-head"><div class="setting-label">Light Theme</div><div class="toggle" id="tog-lighttheme" onclick="toggleLightTheme()"></div></div>
@@ -596,7 +596,7 @@ body.light-theme .send-btn svg{stroke:#07070b}
           <div class="sugg" onclick="fillQ('mRNA vaccines')"><div class="sugg-icon">🧬</div><div class="sugg-title">mRNA Vaccines</div><div class="sugg-desc">Medical overview · PubMed papers · arXiv preprints</div></div>
           <div class="sugg" onclick="fillQ('quantum computing')"><div class="sugg-icon">⚛️</div><div class="sugg-title">Quantum Computing</div><div class="sugg-desc">Wikipedia · arXiv research · OpenAlex works</div></div>
           <div class="sugg" onclick="fillQ('climate change')"><div class="sugg-icon">🌊</div><div class="sugg-title">Climate Change</div><div class="sugg-desc">Cross-source synthesis from 8+ live databases</div></div>
-          <div class="sugg" onclick="fillQ('CRISPR gene editing')"><div class="sugg-icon">🔬</div><div class="sugg-title">CRISPR</div><div class="sugg-desc">Gene editing — PubMed, arXiv, OpenAlex, CrossRef</div></div>
+          <div class="sugg" onclick="fillQ('CRISPR gene editing')"><div class="sugg-icon">🔬</div><div class="sugg-title">CRISPR</div><div class="sugg-desc">Gene editing - PubMed, arXiv, OpenAlex, CrossRef</div></div>
         </div>
       </div>
       <div id="messages"></div>
@@ -607,7 +607,7 @@ body.light-theme .send-btn svg{stroke:#07070b}
     <div class="input-frame">
       <div class="input-wrap">
         <textarea class="input-ta" id="queryInput" rows="1"
-          placeholder="Search anything — topic, question, concept…"
+          placeholder="Search anything - topic, question, concept…"
           onkeydown="handleKey(event)" oninput="autoResize(this);updateCharCounter(this)"></textarea>
         <button class="send-btn" id="sendBtn" onclick="submit()">
           <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -623,7 +623,7 @@ body.light-theme .send-btn svg{stroke:#07070b}
 
 <script>
 // ══════════════════════════════════════════
-// SOURCE DEFINITIONS — all available APIs
+// SOURCE DEFINITIONS - all available APIs
 // ══════════════════════════════════════════
 const SOURCES_CFG = [
   {id:'wikipedia',  name:'Wikipedia',         tag:'edu',  trusted:true,  on:true,  desc:'Free encyclopedia'},
@@ -652,7 +652,7 @@ const SOURCES_CFG = [
 const SETTINGS = {showthink:true,autobib:true,showraw:true,autoscroll:true,newtab:true,keeplog:false};
 let currentMode = 'standard';
 let busy = false;
-let searchHistory = []; // in-memory only — resets on reload, since browser storage isn't available here
+let searchHistory = []; // in-memory only - resets on reload, since browser storage isn't available here
 let requestTimeoutMs = 9000;
 
 const ACCENTS = {
@@ -802,7 +802,7 @@ function scrollBot(){
 }
 // Once a response has finished rendering, scroll so the READER sees the
 // start of it (title + summary) rather than landing at the bottom of a long
-// results list — matches how the fetch-status phase auto-follows to bottom,
+// results list - matches how the fetch-status phase auto-follows to bottom,
 // but the finished answer should be read from the top.
 function scrollToMsgTop(mid){
   if(!SETTINGS.autoscroll)return;
@@ -816,15 +816,15 @@ function setBadge(text,type){
   b.className='tbadge tb-'+(type||'std');
   b.textContent=text;
 }
-function esc(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function esc(t){return String(t||'').replace(/—|–|‒/g,'-').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function trunc(t,n){
   if(!t || t.length<=n) return t||'';
   let cut=t.slice(0,n);
   const lastSpace=cut.lastIndexOf(' ');
-  // Only back off to the last space if it doesn't throw away too much text —
+  // Only back off to the last space if it doesn't throw away too much text -
   // otherwise (e.g. one long word) fall back to the hard cut.
   if(lastSpace>n*0.6) cut=cut.slice(0,lastSpace);
-  return cut.trim().replace(/[,;:.\-–—]+$/,'')+'…';
+  return cut.trim().replace(/[,;:.\---]+$/,'')+'…';
 }
 function setBusy(v){busy=v;document.getElementById('sendBtn').disabled=v;}
 
@@ -895,9 +895,9 @@ function createAiMsg(query){
 
 // ══ MESSAGE ACTIONS ══
 // ══════════════════════════════════════════
-// CLEAN COPY / EXPORT — walks the rendered response and turns anything
+// CLEAN COPY / EXPORT - walks the rendered response and turns anything
 // tabular (result cards, bibliography, debate columns, timeline, category
-// grid, lit-review, fact-check sources) into a real table — a Markdown
+// grid, lit-review, fact-check sources) into a real table - a Markdown
 // pipe-table for plain-text targets, and an actual <table> for rich-text
 // targets (Word, Docs, Notion, email) via the HTML clipboard format.
 // ══════════════════════════════════════════
@@ -970,7 +970,7 @@ function buildCleanResponse(mid){
     const rows=[...catCards].map(c=>[
       c.querySelector('.cat-card-title')?.textContent.trim()||'',
       c.querySelector('.cat-card-count')?.textContent.trim()||'0',
-      c.querySelector('.cat-card-top')?.textContent.trim()||'—',
+      c.querySelector('.cat-card-top')?.textContent.trim()||'-',
       c.querySelector('.cat-card-snip')?.textContent.trim()||''
     ]);
     md.push(mdTable(['Category','Count','Top Result','Snippet'],rows));
@@ -1149,7 +1149,7 @@ function printResponse(mid){
   if(!el)return;
   const w=window.open('','_blank');
   if(!w)return;
-  w.document.write(`<html><head><title>Ligma Research — Print</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#111;line-height:1.65;max-width:760px;margin:0 auto}a{color:#0645ad}h1,h2,h3{color:#111}</style></head><body>${el.innerHTML}</body></html>`);
+  w.document.write(`<html><head><title>Ligma Research - Print</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#111;line-height:1.65;max-width:760px;margin:0 auto}a{color:#0645ad}h1,h2,h3{color:#111}</style></head><body>${el.innerHTML}</body></html>`);
   w.document.close();
   w.focus();
   setTimeout(()=>{w.print();},350);
@@ -1168,13 +1168,13 @@ function setFR(mid,src,state,text){
   let row=document.getElementById(mid+'_'+src);
   if(!row){row=document.createElement('div');row.id=mid+'_'+src;fs.appendChild(row);}
   row.className='fetch-row '+state;
-  const ic={active:'<div class="spinner"></div>',done:'✓',error:'✕',skip:'–'}[state]||'○';
+  const ic={active:'<div class="spinner"></div>',done:'✓',error:'✕',skip:'-'}[state]||'○';
   row.innerHTML=`<span class="fetch-ic">${ic}</span><span>${text}</span>`;
   scrollBot();
 }
 
 // ══════════════════════════════════════════
-// FETCH HELPERS — timeout-guarded
+// FETCH HELPERS - timeout-guarded
 // ══════════════════════════════════════════
 async function fetchWithTimeout(url, opts={}, ms=null){
   ms = ms || requestTimeoutMs;
@@ -1381,7 +1381,7 @@ async function fRestCountries(q,max){
     const d=await r.json();
     return(Array.isArray(d)?d:[]).slice(0,max).map(c=>({
       title:c.name?.common||'',
-      snippet:`Capital: ${(c.capital||[]).join(', ')||'—'} · Region: ${c.region||'—'} · Population: ${c.population?c.population.toLocaleString():'—'}`,
+      snippet:`Capital: ${(c.capital||[]).join(', ')||'-'} · Region: ${c.region||'-'} · Population: ${c.population?c.population.toLocaleString():'-'}`,
       url:c.maps?.googleMaps||'',
       source:'REST Countries'
     }));
@@ -1413,7 +1413,7 @@ async function fHackerNews(q,max){
 }
 
 // ══════════════════════════════════════════
-// SYNTHESISER — builds the summary from raw data
+// SYNTHESISER - builds the summary from raw data
 // ══════════════════════════════════════════
 function estimateReadMins(html){
   if(!html)return 0;
@@ -1465,7 +1465,7 @@ function synthesise(query, data, mode) {
     return {title:topTitle, body:'No content could be extracted from the available sources for this query.', thinking:null, paperCount, sourcesHit:sourcesHit.length};
   }
 
-  // Base extract — long-form wiki text is our main anchor
+  // Base extract - long-form wiki text is our main anchor
   const wikiText = data.wiki?.summary?.extract || '';
 
   // Build body by mode
@@ -1496,11 +1496,11 @@ function synthesise(query, data, mode) {
     }
     const medSnips=[...data.pubmed,...data.europepmc].filter(r=>r.snippet&&r.snippet.length>50).slice(0,3);
     if(medSnips.length){
-      sections.push(`<strong>Medical & Clinical Research</strong><br>${medSnips.map(r=>`<em>${trunc(r.title,80)}</em> — ${r.snippet}`).join('<br><br>')}`);
+      sections.push(`<strong>Medical & Clinical Research</strong><br>${medSnips.map(r=>`<em>${trunc(r.title,80)}</em> - ${r.snippet}`).join('<br><br>')}`);
     }
     const sciSnips=[...data.arxiv,...data.openalex,...data.crossref].filter(r=>r.snippet&&r.snippet.length>80).slice(0,4);
     if(sciSnips.length){
-      sections.push(`<strong>Scientific Literature</strong><br>${sciSnips.map(r=>`<em>${trunc(r.title,80)}</em> — ${r.snippet}`).join('<br><br>')}`);
+      sections.push(`<strong>Scientific Literature</strong><br>${sciSnips.map(r=>`<em>${trunc(r.title,80)}</em> - ${r.snippet}`).join('<br><br>')}`);
     }
     const ddgExtra=data.ddg.filter(r=>r.snippet&&r.snippet.length>80).slice(0,2);
     if(ddgExtra.length){
@@ -1514,11 +1514,11 @@ function synthesise(query, data, mode) {
     const src=wikiText||data.ddg?.[0]?.snippet||allSnippets[0]?.text||'';
     const sentences=src.match(/[^.!?]+[.!?]+/g)||[src];
     const simple=sentences.slice(0,4).join(' ');
-    body=`🌟 <strong>Here's the simple version:</strong><br><br>${simple}<br><br>📚 <em>Based on ${paperCount} research papers and ${sourcesHit.length} databases — but explained simply!</em>`;
+    body=`🌟 <strong>Here's the simple version:</strong><br><br>${simple}<br><br>📚 <em>Based on ${paperCount} research papers and ${sourcesHit.length} databases - but explained simply!</em>`;
   }
 
   else if(mode==='debate'){
-    // Split into pro/con — we can't really know sides without AI, but we can show research vs caveats
+    // Split into pro/con - we can't really know sides without AI, but we can show research vs caveats
     return {title:topTitle, body:'', thinking:null, paperCount, sourcesHit:sourcesHit.length, debateData:buildDebate(query,allSnippets,wikiText)};
   }
 
@@ -1530,7 +1530,7 @@ function synthesise(query, data, mode) {
     const src=wikiText||data.ddg?.[0]?.snippet||allSnippets[0]?.text||'';
     const sentences=src.match(/[^.!?]+[.!?]+/g)||[src];
     body=sentences.slice(0,2).join(' ').trim();
-    if(!body) body='No concise answer could be extracted — try Standard mode for a fuller picture.';
+    if(!body) body='No concise answer could be extracted - try Standard mode for a fuller picture.';
     return {title:topTitle, body, thinking:null, paperCount, sourcesHit:sourcesHit.length, quick:true};
   }
 
@@ -1574,16 +1574,16 @@ Total snippets gathered: ${snippets.length}
 Academic papers found: ${paperCount}
 
 Key observations:
-— Wikipedia provides the encyclopedic anchor definition
-— PubMed/Europe PMC give clinical and biomedical context
-— arXiv/OpenAlex provide cutting-edge preprint research
-— CrossRef/DOAJ add peer-reviewed journal coverage
-— DuckDuckGo provides general knowledge summaries
+- Wikipedia provides the encyclopedic anchor definition
+- PubMed/Europe PMC give clinical and biomedical context
+- arXiv/OpenAlex provide cutting-edge preprint research
+- CrossRef/DOAJ add peer-reviewed journal coverage
+- DuckDuckGo provides general knowledge summaries
 
 Synthesising most relevant content across all sources...`;
 }
 
-// Lightweight heuristic classifier for debate mode — looks for hedging /
+// Lightweight heuristic classifier for debate mode - looks for hedging /
 // negative-outcome language to sort snippets into "caveats" vs "evidence".
 // This is NOT genuine stance detection (that needs an LLM), so we label the
 // columns honestly and disclose the method instead of pretending it's balanced argument.
@@ -1607,7 +1607,7 @@ function buildDebate(query, snippets, wikiText){
 }
 
 // Crude corroboration heuristic: counts how many *distinct* sources returned
-// a snippet at all. This measures source overlap, not truth — labeled as such
+// a snippet at all. This measures source overlap, not truth - labeled as such
 // in the UI. Real fact-checking needs claim-level entailment, which this can't do.
 function buildBrief(wikiText, snippets){
   // Pull distinct, substantive sentences from the strongest sources and cap at 6.
@@ -1710,7 +1710,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
 
   let html=`<div class="stats-row">${statParts.map(s=>`<div class="stat-chip">${s}</div>`).join('')}</div>`;
 
-  // Universal summary — several modes (debate, timeline, academic, factcheck,
+  // Universal summary - several modes (debate, timeline, academic, factcheck,
   // category, compare) don't otherwise surface a plain-language overview.
   if(['debate','timeline','academic','factcheck','category','brief'].includes(mode)){
     const tl=tldr(data);
@@ -1736,7 +1736,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
       <div class="summary-mode-label">⚖️ DEBATE BOTH SIDES <span>· ${esc(query)}</span></div>
       <div class="summary-title">${esc(synth.title)}</div>`;
     if(dd.overview)html+=`<div class="summary-text" style="margin-bottom:14px">${esc(dd.overview)}</div>`;
-    html+=`<div class="debate-note">⚠ Sorted by keyword heuristic (hedging/risk language → caveats), not true stance detection. Read both columns critically — a snippet landing in "evidence" isn't necessarily pro, just non-hedged.</div>`;
+    html+=`<div class="debate-note">⚠ Sorted by keyword heuristic (hedging/risk language → caveats), not true stance detection. Read both columns critically - a snippet landing in "evidence" isn't necessarily pro, just non-hedged.</div>`;
     html+=`<div class="debate-cols">
       <div class="debate-col debate-pro">
         <div class="debate-col-title">✅ Supporting Evidence</div>
@@ -1770,7 +1770,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
               ${e.text?`<div class="tl-text">${esc(e.text)}</div>`:''}
             </div>
           </div>`).join(''):
-          `<div style="color:var(--t3);font-size:12px;font-family:var(--mono);padding:8px 0">No dated results found — try a more specific query</div>`
+          `<div style="color:var(--t3);font-size:12px;font-family:var(--mono);padding:8px 0">No dated results found - try a more specific query</div>`
         }
       </div>
       <div class="summary-meta">
@@ -1783,7 +1783,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
   else if(mode==='academic' && synth.litreview){
     const lr=synth.litreview;
     html+=`<div class="summary-block mode-deep">
-      <div class="summary-mode-label">🎓 ACADEMIC — LIT REVIEW <span>· ${esc(query)}</span></div>
+      <div class="summary-mode-label">🎓 ACADEMIC - LIT REVIEW <span>· ${esc(query)}</span></div>
       <div class="summary-title">${esc(synth.title)}</div>
       ${lr.length?lr.map((p,i)=>`
         <div class="litrev-entry">
@@ -1791,7 +1791,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
           <div class="litrev-title">${p.url?`<a href="${esc(p.url)}" target="${SETTINGS.newtab?'_blank':'_self'}" rel="noopener" style="color:inherit;text-decoration:none">${esc(p.title)}</a>`:esc(p.title)}</div>
           <div class="litrev-text">${esc(p.snippet)}</div>
         </div>`).join(''):
-        `<div style="color:var(--t3);font-size:12px;font-family:var(--mono)">No scholarly sources returned results — enable PubMed, arXiv, OpenAlex, CrossRef, DOAJ or Semantic Scholar in the Sources panel.</div>`}
+        `<div style="color:var(--t3);font-size:12px;font-family:var(--mono)">No scholarly sources returned results - enable PubMed, arXiv, OpenAlex, CrossRef, DOAJ or Semantic Scholar in the Sources panel.</div>`}
       <div class="summary-meta">
         <div class="smeta-chip"><b>${lr.length}</b> papers cited</div>
         <div class="smeta-chip"><b>${synth.sourcesHit}</b> databases</div>
@@ -1809,7 +1809,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
         <div class="corrob-bar"><div class="corrob-fill" style="width:${fc.score}%"></div></div>
         <div class="corrob-label">${fc.score}% coverage</div>
       </div>
-      <div class="debate-note">⚠ This measures how many distinct sources returned content on the topic — it is source overlap, not a truth verdict. Read each snippet and judge for yourself.</div>
+      <div class="debate-note">⚠ This measures how many distinct sources returned content on the topic - it is source overlap, not a truth verdict. Read each snippet and judge for yourself.</div>
       ${fc.entries.length?fc.entries.map(e=>`
         <div class="factcheck-src">
           <div class="fc-ic">●</div>
@@ -1831,7 +1831,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
       <div class="summary-mode-label">📋 BRIEF <span>· ${esc(query)}</span></div>
       <div class="summary-title">${esc(synth.title)}</div>
       ${bp.length?`<ul class="brief-list">${bp.map(p=>`<li><span class="brief-bullet">▸</span><span>${esc(p)}</span></li>`).join('')}</ul>`:
-        `<div style="color:var(--t3);font-size:12px;font-family:var(--mono)">Not enough text returned to build a bullet brief — try Standard mode instead.</div>`}
+        `<div style="color:var(--t3);font-size:12px;font-family:var(--mono)">Not enough text returned to build a bullet brief - try Standard mode instead.</div>`}
       <div class="summary-meta">
         <div class="smeta-chip"><b>${bp.length}</b> key points</div>
         <div class="smeta-chip"><b>${synth.sourcesHit}</b> sources</div>
@@ -1855,7 +1855,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
   }
 
   else if(synth.body){
-    const modeMeta={standard:{label:'⚡ STANDARD SUMMARY',cls:''},think:{label:'🧠 THINK — ANALYTICAL SUMMARY',cls:'mode-think'},deep:{label:'🔬 DEEP RESEARCH SUMMARY',cls:'mode-deep'},eli5:{label:'🧒 ELI5 — SIMPLE EXPLANATION',cls:'mode-eli5'},quick:{label:'🎯 QUICK ANSWER',cls:'mode-eli5'}}[mode]||{label:mode,cls:''};
+    const modeMeta={standard:{label:'⚡ STANDARD SUMMARY',cls:''},think:{label:'🧠 THINK - ANALYTICAL SUMMARY',cls:'mode-think'},deep:{label:'🔬 DEEP RESEARCH SUMMARY',cls:'mode-deep'},eli5:{label:'🧒 ELI5 - SIMPLE EXPLANATION',cls:'mode-eli5'},quick:{label:'🎯 QUICK ANSWER',cls:'mode-eli5'}}[mode]||{label:mode,cls:''};
     html+=`<div class="summary-block ${modeMeta.cls}">
       <div class="summary-mode-label">${modeMeta.label} <span>· ${esc(query)}</span></div>
       ${mode==='quick'?'':`<div class="summary-title">${esc(synth.title)}</div>`}
@@ -1869,7 +1869,7 @@ function renderOutput(mid, query, synth, data, bibEntries){
     </div>`;
   }
 
-  // ── RAW RESULTS ── (skipped in Quick Answer mode — the point is brevity)
+  // ── RAW RESULTS ── (skipped in Quick Answer mode - the point is brevity)
   if(SETTINGS.showraw && mode!=='quick'){
     if(data.wiki?.results?.length)html+=renderSec('📚 Wikipedia Articles', data.wiki.results);
     if(data.ddg?.length)html+=renderSec('⚡ DuckDuckGo', data.ddg);
@@ -1893,10 +1893,10 @@ function renderOutput(mid, query, synth, data, bibEntries){
   // Bibliography
   if(bibEntries.length){
     const bid='bib_'+Date.now();
-    bibliographyText[bid]=bibEntries.map((b,i)=>`[${i+1}] ${b.name} — ${b.desc} (${b.url})`).join('\n');
+    bibliographyText[bid]=bibEntries.map((b,i)=>`[${i+1}] ${b.name} - ${b.desc} (${b.url})`).join('\n');
     html+=`<div class="bib-wrap${SETTINGS.autobib?' open':''}" id="${bid}">
       <div class="bib-hd" onclick="document.getElementById('${bid}').classList.toggle('open')">
-        <div class="bib-htxt">📚 Bibliography — ${bibEntries.length} databases queried</div>
+        <div class="bib-htxt">📚 Bibliography - ${bibEntries.length} databases queried</div>
         <button class="msg-action-btn" style="margin-right:4px" onclick="event.stopPropagation();copyBibliography(this,'${bid}')" title="Copy full bibliography">⧉ Copy all</button>
         <span class="bib-arr">›</span>
       </div>
@@ -1933,7 +1933,7 @@ function renderSec(title, results, showAuthors=false){
   </div>`;
 }
 function copyCitation(btn,title,source,url){
-  const text=`${title} — ${source}${url?' ('+url+')':''}`;
+  const text=`${title} - ${source}${url?' ('+url+')':''}`;
   const done=()=>{const orig=btn.textContent;btn.textContent='✓';setTimeout(()=>{btn.textContent=orig;},1100);};
   if(navigator.clipboard?.writeText){
     navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
@@ -1953,7 +1953,7 @@ function copyBibliography(btn,bid){
 const bibliographyText = {};
 
 // ══════════════════════════════════════════
-// MAIN ORCHESTRATOR — sources fetched in parallel
+// MAIN ORCHESTRATOR - sources fetched in parallel
 // ══════════════════════════════════════════
 async function doResearch(query){
   if(currentMode==='compare'){ return doCompareResearch(query); }
@@ -1964,22 +1964,22 @@ async function doResearch(query){
   const D={wiki:null,ddg:[],wikidata:[],pubmed:[],europepmc:[],arxiv:[],openalex:[],crossref:[],doaj:[],semantics:[],nasa:[],openlibrary:[],github:[],stackx:[],restcountries:[],openfda:[],hackernews:[]};
   const bib=[];
 
-  // Helper — returns a promise per source; UI updates independently as each settles
+  // Helper - returns a promise per source; UI updates independently as each settles
   function run(id, label, fn, store, bibEntry){
-    if(!isOn(id)){setFR(mid,id,'skip',`${label} — disabled`);return Promise.resolve();}
-    setFR(mid,id,'active',`${label} — fetching…`);
+    if(!isOn(id)){setFR(mid,id,'skip',`${label} - disabled`);return Promise.resolve();}
+    setFR(mid,id,'active',`${label} - fetching…`);
     return fn().then(result=>{
       if(store)D[store]=result;
       const n=Array.isArray(result)?result.length:(result?.results?.length||0);
       if(bibEntry&&n>0)bib.push(bibEntry);
-      setFR(mid,id,'done',`${label} — ${n} results`);
+      setFR(mid,id,'done',`${label} - ${n} results`);
     }).catch(e=>{
-      setFR(mid,id,'error',`${label} — failed`);
+      setFR(mid,id,'error',`${label} - failed`);
       console.warn(label,e);
     });
   }
 
-  // Fire all source requests concurrently instead of one-by-one — much faster,
+  // Fire all source requests concurrently instead of one-by-one - much faster,
   // and one slow/failing API no longer blocks the rest.
   await Promise.allSettled([
     run('wikipedia','Wikipedia',()=>fWikipedia(query,max),'wiki',{name:'Wikipedia',desc:'Free encyclopedia',url:'en.wikipedia.org',tag:'edu'}),
@@ -2016,7 +2016,7 @@ async function doResearch(query){
   const total=Object.values(D).reduce((s,v)=>s+(Array.isArray(v)?v.length:(v?.results?.length||0)),0);
 
   if(total===0&&!D.wiki?.summary){
-    document.getElementById(mid+'_out').innerHTML=`<div class="no-res">No results found for "${esc(query)}". Try different keywords, or check the Sources panel — some databases may be disabled.</div>`;
+    document.getElementById(mid+'_out').innerHTML=`<div class="no-res">No results found for "${esc(query)}". Try different keywords, or check the Sources panel - some databases may be disabled.</div>`;
   }else{
     renderOutput(mid,query,synth,D,bib);
   }
@@ -2040,7 +2040,7 @@ function applySortSetting(D){
 }
 
 // ══════════════════════════════════════════
-// COMPARE MODE — lightweight two-entity fetch, separate from the
+// COMPARE MODE - lightweight two-entity fetch, separate from the
 // main 16-source pipeline (comparison only needs an overview per side)
 // ══════════════════════════════════════════
 function splitCompareQuery(q){
@@ -2076,7 +2076,7 @@ async function doCompareResearch(query){
   const terms = splitCompareQuery(query);
 
   if(!terms){
-    setFR(mid,'parse','error','Could not find a comparison — expected "X vs Y"');
+    setFR(mid,'parse','error','Could not find a comparison - expected "X vs Y"');
     const fs=document.getElementById(mid+'_fs'); if(fs && !SETTINGS.keeplog)fs.style.display='none';
     document.getElementById(mid+'_out').innerHTML=`<div class="compare-fallback">Couldn't detect two things to compare in "${esc(query)}". Try a query with "vs" or "versus" in it, e.g. "Python vs JavaScript".</div>`;
     document.getElementById(mid+'_tag').textContent='no comparison detected';
@@ -2087,11 +2087,11 @@ async function doCompareResearch(query){
   }
 
   const [a,b]=terms;
-  setFR(mid,'a',`active`,`${a} — fetching…`);
-  setFR(mid,'b',`active`,`${b} — fetching…`);
+  setFR(mid,'a',`active`,`${a} - fetching…`);
+  setFR(mid,'b',`active`,`${b} - fetching…`);
   const [pa,pb]=await Promise.all([
-    fEntityProfile(a).then(p=>{setFR(mid,'a','done',`${a} — profile ready`);return p;}).catch(e=>{setFR(mid,'a','error',`${a} — failed`);return{term:a,extract:'',url:'',worksCount:null};}),
-    fEntityProfile(b).then(p=>{setFR(mid,'b','done',`${b} — profile ready`);return p;}).catch(e=>{setFR(mid,'b','error',`${b} — failed`);return{term:b,extract:'',url:'',worksCount:null};}),
+    fEntityProfile(a).then(p=>{setFR(mid,'a','done',`${a} - profile ready`);return p;}).catch(e=>{setFR(mid,'a','error',`${a} - failed`);return{term:a,extract:'',url:'',worksCount:null};}),
+    fEntityProfile(b).then(p=>{setFR(mid,'b','done',`${b} - profile ready`);return p;}).catch(e=>{setFR(mid,'b','error',`${b} - failed`);return{term:b,extract:'',url:'',worksCount:null};}),
   ]);
 
   const fs=document.getElementById(mid+'_fs');
