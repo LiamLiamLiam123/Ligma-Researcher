@@ -886,10 +886,175 @@ function createAiMsg(query){
 }
 
 // ══ MESSAGE ACTIONS ══
+// ══════════════════════════════════════════
+// CLEAN COPY / EXPORT — walks the rendered response and turns anything
+// tabular (result cards, bibliography, debate columns, timeline, category
+// grid, lit-review, fact-check sources) into a real table — a Markdown
+// pipe-table for plain-text targets, and an actual <table> for rich-text
+// targets (Word, Docs, Notion, email) via the HTML clipboard format.
+// ══════════════════════════════════════════
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function mdCell(s){return String(s||'').replace(/\|/g,'\\|').replace(/\r?\n+/g,' ').trim();}
+function mdTable(headers, rows){
+  if(!rows.length)return'';
+  let out='| '+headers.join(' | ')+' |\n';
+  out+='|'+headers.map(()=>'---').join('|')+'|\n';
+  rows.forEach(r=>{out+='| '+r.map(mdCell).join(' | ')+' |\n';});
+  return out;
+}
+function htmlTable(headers, rows){
+  if(!rows.length)return'';
+  const thStyle='border:1px solid #ccc;padding:6px 10px;background:#f0f0f0;text-align:left;font:600 13px sans-serif';
+  const tdStyle='border:1px solid #ccc;padding:6px 10px;font:13px sans-serif;vertical-align:top';
+  const thead='<tr>'+headers.map(h=>`<th style="${thStyle}">${escHtml(h)}</th>`).join('')+'</tr>';
+  const tbody=rows.map(r=>'<tr>'+r.map(c=>`<td style="${tdStyle}">${escHtml(c)}</td>`).join('')+'</tr>').join('');
+  return `<table style="border-collapse:collapse;width:100%;margin:10px 0"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
+}
+// Converts the summary/quick-answer prose (which only ever contains <strong>,
+// <em>, <br>, <hr>) into clean Markdown instead of dumping raw tag soup.
+function proseToMarkdown(el){
+  let h=el.innerHTML||'';
+  h=h.replace(/<br\s*\/?>/gi,'\n').replace(/<hr[^>]*>/gi,'\n\n---\n\n');
+  h=h.replace(/<strong>([\s\S]*?)<\/strong>/gi,'**$1**').replace(/<em>([\s\S]*?)<\/em>/gi,'_$1_');
+  h=h.replace(/<[^>]+>/g,'');
+  const ta=document.createElement('textarea');ta.innerHTML=h; // decode entities safely
+  return ta.value.trim();
+}
+
+function buildCleanResponse(mid){
+  const out=document.getElementById(mid+'_out');
+  if(!out)return{text:'',html:''};
+  const md=[], htm=[];
+
+  const titleEl=out.querySelector('.summary-title');
+  if(titleEl){md.push('## '+titleEl.textContent.trim());htm.push(`<h2>${escHtml(titleEl.textContent.trim())}</h2>`);}
+
+  const tldrEl=out.querySelector('.tldr-text');
+  if(tldrEl){md.push('**Summary:** '+tldrEl.textContent.trim()+'\n');htm.push(`<p><strong>Summary:</strong> ${escHtml(tldrEl.textContent.trim())}</p>`);}
+
+  const bodyEl=out.querySelector('.summary-text, .quick-answer');
+  if(bodyEl){const mdBody=proseToMarkdown(bodyEl);md.push(mdBody+'\n');htm.push(`<div>${bodyEl.innerHTML}</div>`);}
+
+  // Debate columns → 2-col table
+  const debateCols=out.querySelector('.debate-cols');
+  if(debateCols){
+    const pros=[...debateCols.querySelectorAll('.debate-pro li')].map(li=>li.textContent.trim());
+    const cons=[...debateCols.querySelectorAll('.debate-con li')].map(li=>li.textContent.trim());
+    const n=Math.max(pros.length,cons.length);
+    const rows=Array.from({length:n},(_,i)=>[pros[i]||'',cons[i]||'']);
+    md.push(mdTable(['Supporting Evidence','Counterpoints & Caveats'],rows));
+    htm.push(htmlTable(['Supporting Evidence','Counterpoints & Caveats'],rows));
+  }
+
+  // Compare columns → 2-col table
+  const compareCols=out.querySelector('.compare-cols');
+  if(compareCols){
+    const terms=[...out.querySelectorAll('.compare-term')].map(t=>t.textContent.trim());
+    const cols=[...compareCols.querySelectorAll('.compare-col')].map(c=>c.textContent.trim());
+    const rows=[[cols[0]||'',cols[1]||'']];
+    md.push(mdTable([terms[0]||'A',terms[1]||'B'],rows));
+    htm.push(htmlTable([terms[0]||'A',terms[1]||'B'],rows));
+  }
+
+  // Category grid → table
+  const catCards=out.querySelectorAll('.cat-card');
+  if(catCards.length){
+    const rows=[...catCards].map(c=>[
+      c.querySelector('.cat-card-title')?.textContent.trim()||'',
+      c.querySelector('.cat-card-count')?.textContent.trim()||'0',
+      c.querySelector('.cat-card-top')?.textContent.trim()||'—',
+      c.querySelector('.cat-card-snip')?.textContent.trim()||''
+    ]);
+    md.push(mdTable(['Category','Count','Top Result','Snippet'],rows));
+    htm.push(htmlTable(['Category','Count','Top Result','Snippet'],rows));
+  }
+
+  // Timeline → table
+  const tlItems=out.querySelectorAll('.timeline-item');
+  if(tlItems.length){
+    const rows=[...tlItems].map(it=>[
+      it.querySelector('.tl-date')?.textContent.trim()||'',
+      it.querySelector('.tl-title')?.textContent.trim()||'',
+      it.querySelector('.tl-text')?.textContent.trim()||''
+    ]);
+    md.push(mdTable(['Date · Source','Title','Detail'],rows));
+    htm.push(htmlTable(['Date · Source','Title','Detail'],rows));
+  }
+
+  // Academic lit review → table
+  const litEntries=out.querySelectorAll('.litrev-entry');
+  if(litEntries.length){
+    const rows=[...litEntries].map(e=>[
+      e.querySelector('.litrev-cite')?.textContent.trim()||'',
+      e.querySelector('.litrev-title')?.textContent.trim()||'',
+      e.querySelector('.litrev-text')?.textContent.trim()||''
+    ]);
+    md.push(mdTable(['Citation','Title','Summary'],rows));
+    htm.push(htmlTable(['Citation','Title','Summary'],rows));
+  }
+
+  // Fact-check sources → table
+  const fcSrcs=out.querySelectorAll('.factcheck-src');
+  if(fcSrcs.length){
+    const meter=out.querySelector('.corrob-label')?.textContent.trim();
+    if(meter){md.push('**Corroboration:** '+meter+'\n');htm.push(`<p><strong>Corroboration:</strong> ${escHtml(meter)}</p>`);}
+    const rows=[...fcSrcs].map(e=>[
+      e.querySelector('.fc-src-name')?.textContent.trim()||'',
+      e.querySelector('.fc-text')?.textContent.trim()||''
+    ]);
+    md.push(mdTable(['Source','Snippet'],rows));
+    htm.push(htmlTable(['Source','Snippet'],rows));
+  }
+
+  // Brief bullets → markdown list (genuinely a list, not tabular)
+  const briefItems=out.querySelectorAll('.brief-list li');
+  if(briefItems.length){
+    [...briefItems].forEach(li=>md.push('- '+li.textContent.trim()));
+    md.push('');
+    htm.push('<ul>'+[...briefItems].map(li=>`<li>${escHtml(li.textContent.trim())}</li>`).join('')+'</ul>');
+  }
+
+  // Raw result sections → one table per source
+  out.querySelectorAll('.results-section').forEach(sec=>{
+    const secTitle=sec.querySelector('.sec-title')?.textContent.trim()||'Results';
+    const cards=[...sec.querySelectorAll('.result-card')];
+    if(!cards.length)return;
+    const hasAuthors=cards.some(c=>c.querySelector('.rc-authors'));
+    const headers=hasAuthors?['Title','Source','Authors','Date','Snippet']:['Title','Source','Date','Snippet'];
+    const rows=cards.map(c=>{
+      const base=[
+        c.querySelector('.rc-title')?.textContent.trim()||'',
+        c.querySelector('.rc-src')?.textContent.trim()||'',
+      ];
+      if(hasAuthors)base.push(c.querySelector('.rc-authors')?.textContent.trim()||'');
+      base.push(c.querySelector('.rc-date')?.textContent.trim()||'');
+      base.push(c.querySelector('.rc-snip')?.textContent.trim()||'');
+      return base;
+    });
+    md.push('### '+secTitle+'\n');
+    md.push(mdTable(headers,rows));
+    htm.push(`<h3>${escHtml(secTitle)}</h3>`+htmlTable(headers,rows));
+  });
+
+  // Bibliography → table
+  const bibEntries=out.querySelectorAll('.bib-entry');
+  if(bibEntries.length){
+    const rows=[...bibEntries].map((e,i)=>[
+      String(i+1),
+      e.querySelector('.bib-sn')?.textContent.trim()||'',
+      e.querySelector('.bib-sd')?.textContent.trim()||'',
+      (e.querySelector('.bib-url')?.textContent||'').replace('↗','').trim()
+    ]);
+    md.push('### Bibliography\n');
+    md.push(mdTable(['#','Source','Description','URL'],rows));
+    htm.push('<h3>Bibliography</h3>'+htmlTable(['#','Source','Description','URL'],rows));
+  }
+
+  return{text:md.join('\n').trim(), html:'<div style="font-family:sans-serif">'+htm.join('\n')+'</div>'};
+}
+
 function copyResponse(mid){
-  const el=document.getElementById(mid+'_out');
-  if(!el)return;
-  const text=el.innerText||el.textContent||'';
+  const {text,html}=buildCleanResponse(mid);
   const flash=()=>{
     const btn=document.getElementById(mid+'_copybtn');
     if(!btn)return;
@@ -897,6 +1062,18 @@ function copyResponse(mid){
     btn.textContent='✓ Copied';
     setTimeout(()=>{btn.textContent=orig;},1400);
   };
+  if(navigator.clipboard?.write && window.ClipboardItem){
+    try{
+      const item=new ClipboardItem({
+        'text/plain':new Blob([text],{type:'text/plain'}),
+        'text/html':new Blob([html],{type:'text/html'})
+      });
+      navigator.clipboard.write([item]).then(flash).catch(()=>{
+        navigator.clipboard.writeText?.(text).then(flash).catch(()=>fallbackCopy(text,flash));
+      });
+      return;
+    }catch(e){/* fall through to plain-text paths below */}
+  }
   if(navigator.clipboard?.writeText){
     navigator.clipboard.writeText(text).then(flash).catch(()=>fallbackCopy(text,flash));
   }else{
@@ -912,9 +1089,7 @@ function fallbackCopy(text,cb){
   if(cb)cb();
 }
 function exportMarkdown(mid,query){
-  const el=document.getElementById(mid+'_out');
-  if(!el)return;
-  const text=el.innerText||'';
+  const {text}=buildCleanResponse(mid);
   const md=`# ${query}\n\n${text}\n\n---\n*Generated by Ligma Research · ${new Date().toISOString().slice(0,10)} · no AI, live public APIs only*`;
   const blob=new Blob([md],{type:'text/markdown'});
   const url=URL.createObjectURL(blob);
