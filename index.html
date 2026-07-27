@@ -212,6 +212,9 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .rc-title a{color:var(--t1);text-decoration:none;transition:color 0.15s}
 .rc-title a:hover{color:var(--lime)}
 .rc-snip{font-size:calc(var(--base-font-size) - 1.5px);color:var(--t2);line-height:1.6}
+.rc-snip.collapsed{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.rc-more{font-size:10px;font-family:var(--mono);color:var(--lime);cursor:pointer;margin-top:3px;background:none;border:none;padding:0;display:block;opacity:0.8;transition:opacity 0.15s}
+.rc-more:hover{opacity:1}
 .rc-authors{font-size:10.5px;color:var(--t3);margin-top:4px;font-family:var(--mono)}
 .rc-date{font-size:10px;font-family:var(--mono);color:var(--t3);margin-top:3px}
 .rc-cite{font-size:10px;font-family:var(--mono);color:var(--amber);margin-top:3px}
@@ -1203,16 +1206,16 @@ async function fWikipedia(q,max){
       if(sumR.ok)summary=await sumR.json();
     }catch(e){}
   }
-  return{summary,results:hits.map(h=>({title:h.title,snippet:h.snippet.replace(/<[^>]+>/g,''),url:`https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g,'_'))}`,source:'Wikipedia'}))};
+  return{summary,results:hits.map(h=>({title:h.title,snippet:trunc(h.snippet.replace(/<[^>]+>/g,''),180),url:`https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g,'_'))}`,source:'Wikipedia'}))};
 }
 
 async function fDDG(q){
   const r=await fetchWithTimeout(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_redirect=1&skip_disambig=1`);
   const d=await r.json();
   const out=[];
-  if(d.AbstractText)out.push({title:d.Heading||q,snippet:d.AbstractText,url:d.AbstractURL||'',source:'DuckDuckGo / '+(d.AbstractSource||'')});
+  if(d.AbstractText)out.push({title:d.Heading||q,snippet:trunc(d.AbstractText,180),url:d.AbstractURL||'',source:'DuckDuckGo / '+(d.AbstractSource||''),full:d.AbstractText});
   (d.RelatedTopics||[]).slice(0,4).forEach(t=>{
-    if(t.Text&&t.FirstURL)out.push({title:t.Text.split(' - ')[0],snippet:t.Text,url:t.FirstURL,source:'DuckDuckGo'});
+    if(t.Text&&t.FirstURL)out.push({title:t.Text.split(' - ')[0],snippet:trunc(t.Text,180),url:t.FirstURL,source:'DuckDuckGo'});
   });
   return out;
 }
@@ -1236,7 +1239,7 @@ async function fEuropePMC(q,max){
   const d=await r.json();
   return(d.resultList?.result||[]).map(a=>({
     title:a.title||'Untitled',
-    snippet:trunc(a.abstractText||`${a.journalTitle||''} ${a.pubYear||''}`,280),
+    snippet:trunc(a.abstractText||`${a.journalTitle||''} ${a.pubYear||''}`,180),
     url:a.doi?`https://doi.org/${a.doi}`:`https://europepmc.org/article/${a.source}/${a.id}`,
     authors:a.authorString?.split(',').slice(0,3).join(','),
     date:a.pubYear,source:'Europe PMC'
@@ -1251,7 +1254,7 @@ async function fArxiv(q,max){
     const rawId=(e.querySelector('id')?.textContent||'').trim();
     const arxivId=rawId.replace(/https?:\/\/arxiv\.org\/abs\//,'');
     const summary=(e.querySelector('summary')?.textContent||'').trim().replace(/\s+/g,' ');
-    return{title:e.querySelector('title')?.textContent?.trim()||'',snippet:trunc(summary,280),url:`https://arxiv.org/abs/${arxivId}`,authors:Array.from(e.querySelectorAll('author name')).slice(0,3).map(a=>a.textContent).join(', '),date:e.querySelector('published')?.textContent?.slice(0,10)||'',source:'arXiv'};
+    return{title:e.querySelector('title')?.textContent?.trim()||'',snippet:trunc(summary,180),url:`https://arxiv.org/abs/${arxivId}`,authors:Array.from(e.querySelectorAll('author name')).slice(0,3).map(a=>a.textContent).join(', '),date:e.querySelector('published')?.textContent?.slice(0,10)||'',source:'arXiv'};
   });
 }
 
@@ -1267,7 +1270,7 @@ async function fOpenAlex(q,max){
   const d=await r.json();
   return(d.results||[]).map(w=>({
     title:w.title||'',
-    snippet:trunc(w.abstract_inverted_index?rebuildAbstract(w.abstract_inverted_index):(w.primary_location?.source?.display_name?'Published in: '+w.primary_location.source.display_name:''),280),
+    snippet:trunc(w.abstract_inverted_index?rebuildAbstract(w.abstract_inverted_index):(w.primary_location?.source?.display_name?'Published in: '+w.primary_location.source.display_name:''),180),
     url:w.primary_location?.landing_page_url||w.id||'',
     authors:(w.authorships||[]).slice(0,3).map(a=>a.author?.display_name||'').filter(Boolean).join(', '),
     date:w.publication_year?.toString()||'',
@@ -1297,7 +1300,7 @@ async function fDOAJ(q,max){
     const bi=a.bibjson||{};
     return{
       title:bi.title||'',
-      snippet:trunc(bi.abstract||'',280),
+      snippet:trunc(bi.abstract||'',180),
       url:bi.link?.[0]?.url||`https://doaj.org/article/${a.id}`,
       authors:(bi.author||[]).slice(0,3).map(x=>x.name||'').join(', '),
       date:bi.year||'',
@@ -1317,7 +1320,7 @@ async function fSemanticScholar(q,max){
   const d=await r.json();
   return(d.data||[]).map(p=>({
     title:p.title||'',
-    snippet:trunc(p.abstract||'',280),
+    snippet:trunc(p.abstract||'',180),
     url:p.url||`https://www.semanticscholar.org/paper/${p.paperId}`,
     authors:(p.authors||[]).slice(0,3).map(a=>a.name||'').join(', '),
     date:p.year?.toString()||'',
@@ -1331,7 +1334,7 @@ async function fNASA(q,max){
   const d=await r.json();
   return(d.collection?.items||[]).slice(0,max).map(it=>{
     const dd=it.data?.[0]||{};
-    return{title:dd.title||'Untitled',snippet:trunc(dd.description||'',280),url:it.links?.[0]?.href||'',date:dd.date_created?dd.date_created.slice(0,10):'',source:'NASA'};
+    return{title:dd.title||'Untitled',snippet:trunc(dd.description||'',180),url:it.links?.[0]?.href||'',date:dd.date_created?dd.date_created.slice(0,10):'',source:'NASA'};
   });
 }
 
@@ -1353,7 +1356,7 @@ async function fGitHub(q,max){
   const d=await r.json();
   return(d.items||[]).map(repo=>({
     title:repo.full_name||'',
-    snippet:trunc(repo.description||'',280),
+    snippet:trunc(repo.description||'',180),
     url:repo.html_url||'',
     date:repo.updated_at?repo.updated_at.slice(0,10):'',
     cited:repo.stargazers_count||0,
@@ -1395,7 +1398,7 @@ async function fOpenFDA(q,max){
   return(d.results||[]).map(rec=>{
     const name=rec.openfda?.brand_name?.[0]||rec.openfda?.generic_name?.[0]||'Unnamed drug record';
     const purpose=(rec.purpose||rec.indications_and_usage||[])[0]||'';
-    return{title:name,snippet:trunc(purpose,280),url:'',source:'openFDA'};
+    return{title:name,snippet:trunc(purpose,180),url:'',source:'openFDA'};
   });
 }
 
@@ -1918,19 +1921,39 @@ function renderOutput(mid, query, synth, data, bibEntries){
   outEl.innerHTML = html;
 }
 
+// Snippets longer than this character count get a collapsed "Show more" expander
+// on result cards. The full text is still stored in the data object and available
+// for copy/export — this is purely a display-density control.
+const SNIPPET_COLLAPSE_THRESHOLD = 140;
+let _snippetSeq = 0;
+
 function renderSec(title, results, showAuthors=false){
   if(!results?.length)return'';
   return`<div class="results-section">
     <div class="sec-title">${esc(title)}</div>
-    ${results.map(r=>`<div class="result-card">
-      <button class="rc-cite-btn" onclick="copyCitation(this,'${escJs(r.title)}','${escJs(r.source)}','${escJs(r.url||'')}')" title="Copy citation">⧉ Cite</button>
-      <div class="rc-src">${esc(r.source)}</div>
-      <div class="rc-title">${r.url?`<a href="${esc(r.url)}" target="${SETTINGS.newtab?'_blank':'_self'}" rel="noopener">${esc(r.title)}</a>`:esc(r.title)}</div>
-      ${r.snippet?`<div class="rc-snip">${esc(r.snippet)}</div>`:''}
-      ${showAuthors&&r.authors?`<div class="rc-authors">${esc(r.authors)}</div>`:''}
-      ${r.date?`<div class="rc-date">${esc(r.date)}${r.cited?' · cited '+r.cited+'×':''}</div>`:''}
-    </div>`).join('')}
+    ${results.map(r=>{
+      const snipId='snip_'+(++_snippetSeq);
+      const long = r.snippet && r.snippet.length > SNIPPET_COLLAPSE_THRESHOLD;
+      const snipHtml = r.snippet
+        ? `<div class="rc-snip${long?' collapsed':''}" id="${snipId}">${esc(r.snippet)}</div>
+           ${long?`<button class="rc-more" onclick="toggleSnip('${snipId}',this)">Show more</button>`:''}`
+        : '';
+      return`<div class="result-card">
+        <button class="rc-cite-btn" onclick="copyCitation(this,'${escJs(r.title)}','${escJs(r.source)}','${escJs(r.url||'')}')" title="Copy citation">⧉ Cite</button>
+        <div class="rc-src">${esc(r.source)}</div>
+        <div class="rc-title">${r.url?`<a href="${esc(r.url)}" target="${SETTINGS.newtab?'_blank':'_self'}" rel="noopener">${esc(r.title)}</a>`:esc(r.title)}</div>
+        ${snipHtml}
+        ${showAuthors&&r.authors?`<div class="rc-authors">${esc(r.authors)}</div>`:''}
+        ${r.date?`<div class="rc-date">${esc(r.date)}${r.cited?' · cited '+r.cited+'×':''}</div>`:''}
+      </div>`;
+    }).join('')}
   </div>`;
+}
+function toggleSnip(id, btn){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const collapsed=el.classList.toggle('collapsed');
+  btn.textContent=collapsed?'Show more':'Show less';
 }
 function copyCitation(btn,title,source,url){
   const text=`${title} - ${source}${url?' ('+url+')':''}`;
