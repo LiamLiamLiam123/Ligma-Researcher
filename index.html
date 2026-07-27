@@ -817,7 +817,15 @@ function setBadge(text,type){
   b.textContent=text;
 }
 function esc(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function trunc(t,n){return t&&t.length>n?t.slice(0,n)+'…':(t||'');}
+function trunc(t,n){
+  if(!t || t.length<=n) return t||'';
+  let cut=t.slice(0,n);
+  const lastSpace=cut.lastIndexOf(' ');
+  // Only back off to the last space if it doesn't throw away too much text —
+  // otherwise (e.g. one long word) fall back to the hard cut.
+  if(lastSpace>n*0.6) cut=cut.slice(0,lastSpace);
+  return cut.trim().replace(/[,;:.\-–—]+$/,'')+'…';
+}
 function setBusy(v){busy=v;document.getElementById('sendBtn').disabled=v;}
 
 // ══ HISTORY ══
@@ -842,7 +850,7 @@ function submit(){
   const ta=document.getElementById('queryInput');
   const q=ta.value.trim();if(!q)return;
   document.getElementById('welcome').style.display='none';
-  document.getElementById('topbarTitle').textContent=q.length>55?q.slice(0,55)+'…':q;
+  document.getElementById('topbarTitle').textContent=trunc(q,55);
   ta.value='';ta.style.height='auto';updateCharCounter(ta);
   const msgs=document.getElementById('messages');
   const ug=document.createElement('div');
